@@ -1,0 +1,19 @@
+﻿<Properties StartupConfiguration="{E5A172D3-CE33-4031-84EA-35835913261E}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Node Folder/ComparisonLine.cs">
+    <Files>
+      <File FileName="RuleParser Folder/Tokenizer.cs" Line="10" Column="62" />
+      <File FileName="Program.cs" Line="95" Column="25" />
+      <File FileName="Node Folder/ComparisonLine.cs" Line="81" Column="116" />
+      <File FileName="Node Folder/ExprConclusionLine.cs" Line="86" Column="61" />
+      <File FileName="Node Folder/Node.cs" Line="92" Column="21" />
+      <File FileName="FactValue Folder/FactDateValue.cs" Line="6" Column="17" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Nadia.C.Sharp PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>

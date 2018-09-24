@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\Microsoft.ChakraCore.1.11.0\build\netstandard1.0\Microsoft.ChakraCore.props" Condition="Exists('packages\Microsoft.ChakraCore.1.11.0\build\netstandard1.0\Microsoft.ChakraCore.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{E5A172D3-CE33-4031-84EA-35835913261E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Nadia.C.Sharp</RootNamespace>
+    <AssemblyName>Nadia.C.Sharp</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Jint">
+      <HintPath>packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Noesis.Javascript">
+      <HintPath>packages\Noesis.Javascript.0.7.1.0\lib\net40\x86\Noesis.Javascript.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Node Folder\ComparisonLine.cs" />
+    <Compile Include="FactValue Folder\FactValue.cs" />
+    <Compile Include="FactValue Folder\FactDefiStringValue.cs" />
+    <Compile Include="FactValue Folder\FactValueType.cs" />
+    <Compile Include="FactValue Folder\FactStringValue.cs" />
+    <Compile Include="FactValue Folder\FactIntegerValue.cs" />
+    <Compile Include="FactValue Folder\FactDateValue.cs" />
+    <Compile Include="FactValue Folder\FactDoubleValue.cs" />
+    <Compile Include="FactValue Folder\FactBooleanValue.cs" />
+    <Compile Include="FactValue Folder\FactListValue.cs" />
+    <Compile Include="FactValue Folder\FactURLValue.cs" />
+    <Compile Include="FactValue Folder\FactHashValue.cs" />
+    <Compile Include="FactValue Folder\FactUUIDValue.cs" />
+    <Compile Include="Node Folder\Node.cs" />
+    <Compile Include="RuleParser Folder\Tokens.cs" />
+    <Compile Include="RuleParser Folder\Tokenizer.cs" />
+    <Compile Include="Node Folder\LineType.cs" />
+    <Compile Include="Node Folder\Dependency.cs" />
+    <Compile Include="Node Folder\DependencyMatrix.cs" />
+    <Compile Include="Node Folder\DependencyType.cs" />
+    <Compile Include="Node Folder\ExprConclusionLine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Node Folder\" />
+    <Folder Include="FactValue Folder\" />
+    <Folder Include="RuleParser Folder\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

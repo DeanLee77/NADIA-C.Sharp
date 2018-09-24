@@ -1,0 +1,9 @@
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/bin/Debug/Nadia.C.Sharp.exe
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/bin/Debug/Nadia.C.Sharp.pdb
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/bin/Debug/Jint.dll
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/obj/x86/Debug/Nadia.C.Sharp.csproj.CoreCompileInputs.cache
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/obj/x86/Debug/Nadia.C.Sharp.exe
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/obj/x86/Debug/Nadia.C.Sharp.pdb
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/bin/Debug/ChakraCore.dll
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/bin/Debug/Noesis.Javascript.dll
+/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/obj/x86/Debug/Nadia.C.Sharp.csprojResolveAssemblyReference.cache

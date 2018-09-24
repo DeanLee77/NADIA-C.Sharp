@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadia.C.Sharp", "Nadia.C.Sharp.csproj", "{E5A172D3-CE33-4031-84EA-35835913261E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5A172D3-CE33-4031-84EA-35835913261E}.Debug|x86.ActiveCfg = Debug|x86
+		{E5A172D3-CE33-4031-84EA-35835913261E}.Debug|x86.Build.0 = Debug|x86
+		{E5A172D3-CE33-4031-84EA-35835913261E}.Release|x86.ActiveCfg = Release|x86
+		{E5A172D3-CE33-4031-84EA-35835913261E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
