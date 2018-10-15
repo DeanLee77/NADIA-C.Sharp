@@ -44,17 +44,17 @@ namespace Nadia.C.Sharp.FactValueFolder
             return new FactListValue<T>(l);
         }
 
-        public static FactURLValue<T> ParseURL(String url)
+        public static FactURLValue<T> ParseURL(string url)
         {
             return new FactURLValue<T>(url);
         }
 
-        public static FactHashValue<T> ParseHash(String hash)
+        public static FactHashValue<T> ParseHash(string hash)
         {
             return new FactHashValue<T>(hash);
         }
 
-        public static FactUUIDValue<T> ParseUUID(String uuid)
+        public static FactUUIDValue<T> ParseUUID(string uuid)
         {
             return new FactUUIDValue<T>(uuid);
         }

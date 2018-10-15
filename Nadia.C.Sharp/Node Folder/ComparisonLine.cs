@@ -87,7 +87,7 @@ namespace Nadia.C.Sharp.NodeFolder
              */
 
             FactValue<T> workingMemoryLhsValue = workingMemory.ContainsKey(this.variableName) ? workingMemory[this.variableName] : null;
-            FactValue<T> workingMemoryRhsValue = this.GetRHS().GetType().Equals(FactValueType.STRING) ?
+            FactValue<T> workingMemoryRhsValue = this.GetRHS().GetFactValueType().Equals(FactValueType.STRING) ?
                                                       workingMemory[this.GetRHS().GetValue().ToString()]
                                                      :
                                                       this.GetRHS();
@@ -109,7 +109,7 @@ namespace Nadia.C.Sharp.NodeFolder
             /*
              * if it is about date comparison then string of 'script' needs rewriting
              */
-            if ((workingMemoryLhsValue != null && workingMemoryLhsValue.GetType().Equals(FactValueType.DATE)) || (workingMemoryRhsValue != null && workingMemoryRhsValue.GetType().Equals(FactValueType.DATE)))
+            if ((workingMemoryLhsValue != null && workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DATE)) || (workingMemoryRhsValue != null && workingMemoryRhsValue.GetType().Equals(FactValueType.DATE)))
             {
                 Boolean returnValue;
                 switch (this.operatorString)
@@ -133,8 +133,8 @@ namespace Nadia.C.Sharp.NodeFolder
                 }
                 //          script = "new Date("+((FactDateValue)workingMemoryLhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getDayOfMonth()+")"+operator+"new Date("+((FactDateValue)workingMemoryRhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getDayOfMonth()+");" ;
             }
-            else if (workingMemoryLhsValue.GetType().Equals(FactValueType.DECIMAL) || workingMemoryLhsValue.GetType().Equals(FactValueType.DOUBLE)
-                     || workingMemoryLhsValue.GetType().Equals(FactValueType.INTEGER) || workingMemoryLhsValue.GetType().Equals(FactValueType.NUMBER))
+            else if (workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DECIMAL) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DOUBLE)
+                     || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.INTEGER) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.NUMBER))
             {
                 script = workingMemoryLhsValue.GetValue().ToString() + operatorString + workingMemoryRhsValue.GetValue().ToString();
             }

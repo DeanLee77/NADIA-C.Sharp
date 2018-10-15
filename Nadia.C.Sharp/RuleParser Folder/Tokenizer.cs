@@ -44,7 +44,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     Regex regex = matchPatterns[i];
                     Match match = regex.Match(text);
 
-                    if (match.Success == true)
+                    if (match.Success)
                     {
                         var group = match.Groups[0].Value;
 

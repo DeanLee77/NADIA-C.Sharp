@@ -13,15 +13,15 @@ namespace Nadia.C.Sharp.NodeFolder
         private string dateFormatter = @"dd/MM/yyyy";
 
 
-        public ExprConclusionLine(String parentText, Tokens tokens): base(parentText, tokens)
+        public ExprConclusionLine(string parentText, Tokens tokens): base(parentText, tokens)
         {
 
         }
 
-        public override void Initialisation(String parentText, Tokens tokens)
+        public override void Initialisation(string parentText, Tokens tokens)
         {
             this.nodeName = parentText;
-            String[] tempArray = Regex.Split(parentText, "IS CALC");
+            string[] tempArray = Regex.Split(parentText, "IS CALC");
             variableName = tempArray[0].Trim();
             int indexOfCInTokensStringList = tokens.tokensStringList.IndexOf("C");
             this.SetValue(tokens.tokensStringList[indexOfCInTokensStringList].Trim(), tokens.tokensList[indexOfCInTokensStringList].Trim());
@@ -68,6 +68,7 @@ namespace Nadia.C.Sharp.NodeFolder
 
             string script = equationInString;
             string tempScript = script;
+            string result;
 
             if (Regex.IsMatch(equationInString, pattern))
             {
@@ -77,7 +78,7 @@ namespace Nadia.C.Sharp.NodeFolder
                 for (int i = 0; i < tempArrayLength; i++)
                 {
                     tempItem = tempArray[i];
-                    if (!String.IsNullOrEmpty(tempItem.Trim()) && workingMemory[tempItem.Trim()] != null)
+                    if (!string.IsNullOrEmpty(tempItem.Trim()) && workingMemory[tempItem.Trim()] != null)
                     {
                         FactValue<T> tempFv = workingMemory[tempItem.Trim()];
                         if (tempFv.GetValue().GetType().FullName.Equals(DateTime.Now.GetType().FullName))
@@ -97,60 +98,52 @@ namespace Nadia.C.Sharp.NodeFolder
                     }
                 }
             }
-        
-            Match dateMatcher = Regex.Match(tempScript, datePattern);
-            List<string> dateStringList = new List<string>();
-            while(dateMatcher.Success)
-            {
-                dateStringList.Add(dateMatcher.Value);
-            }
-            // if dateStringList.size() == 0 then there is no string in date format
-            script = tempScript;  
-            //if(dateStringList.size() != 0) // case of date calculation
-            //{
-            //    string[] date1Array = dateStringList.get(0).trim().split("/");
-            //    string[] date2Array = dateStringList.get(1).trim().split("/");
-            //    script = "var localDate = java.time.LocalDate; var chronoUnit = java.time.temporal.ChronoUnit; var diffYears = chronoUnit.YEARS.between(localDate.of("+date2Array[2].trim()+","+date2Array[1].trim()+","+date2Array[0].trim()+"), localDate.of("+date1Array[2].trim()+","+date1Array[1].trim()+","+date1Array[0].trim()+")); diffYears;";
-            //}
-    //      else // case of int or double calculation
-    //      {
-    //           don't need to do anything due to script itself can be evaluated as it is
-    //      }
-        
 
+
+
+            MatchCollection dateMatcher = Regex.Matches(tempScript, datePattern);
+            List<DateTime> dateTimeList = new List<DateTime>();
+            if(dateMatcher.Count > 0)
+            {
+                foreach(Match match in dateMatcher)
+                {
+                    string[] datetimeString = Regex.Split(match.Groups[0].ToString(),@"/");
+                    int year = 0;
+                    int month = 0;
+                    int day = 0;
+                    if(Int32.TryParse(datetimeString[2], out year) && Int32.TryParse(datetimeString[1], out month) && Int32.TryParse(datetimeString[0], out day))
+                    {
+                        dateTimeList.Add(new DateTime(year, month, day));
+                    }
+                }
+
+                result = (dateTimeList[0].Subtract(dateTimeList[1]).TotalDays / 365.25).ToString();
+            }
+            else
+            {
+                result = jint.Execute(tempScript).GetCompletionValue().ToString();
+            }
+           
             FactValue<T> returnValue = null;
 
-    //        try {
-    //                string nashornResult = nashorn.eval(script).toString();
-    //                switch(Tokenizer.getTokens(nashornResult).tokensString)
-    //                {
-    //                    case "No":
-    //                        returnValue = FactValue.parse(Integer.parseInt(nashornResult));
-    //                        break;
-    //                    case "De":
-    //                        returnValue = FactValue.parse(Double.parseDouble(nashornResult));
-    //                        break;
-    ////                  there is no function for outcome to be a date at the moment  E.g. The determination IS CALC (enrollment date + 5 days)
-    ////                  case "Da":
-    ////                      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    ////                      LocalDate factValueInDate = LocalDate.parse(nashornResult, formatter);
-    ////                      returnValue = FactValue.parse(factValueInDate);
-    ////                      break;
-            //            default:
-            //            if(this.isBoolean(nashornResult))
-            //            {
-            //                returnValue = FactValue.parse(nashornResult);
-            //            }
-            //            else 
-            //            {
-            //                returnValue = FactValue.parse(nashornResult);
-            //            }
-            //                break;
+            switch(Tokenizer.GetTokens(result).tokensString)
+            {
+                case "No":
+                    int intResult = 0;
+                    Int32.TryParse(result, out intResult);
+                    returnValue = FactValue<T>.Parse(intResult);
+                    break;
+                case "De":
+                    returnValue = FactValue<T>.Parse(Convert.ToDouble(result));
+                    break;
+                //there is no function for outcome to be a date at the moment  E.g.The determination IS CALC(enrollment date + 5 days)
+                //case "Da":
+                default:
+                    returnValue = FactValue<T>.Parse(result);
+                    break;
+                    
+            }
 
-            //        }
-            //} catch (ScriptException e) {
-            //    e.printStackTrace();
-            //}
             return returnValue;
         }
 
