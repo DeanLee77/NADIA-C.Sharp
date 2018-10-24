@@ -1,10 +1,9 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactDoubleValue<T> : FactValue<T>
+    public class FactDoubleValue : FactValue
     {
         private double value;
-        private double? defaultValue; //double? means nullable double primative type
 
         public FactDoubleValue(double d)
         {
@@ -17,28 +16,14 @@ namespace Nadia.C.Sharp.FactValueFolder
         }
 
 
-        public override T GetValue()
+        public double GetValue()
         {
-            return (T)Convert.ChangeType(this.value, typeof(T));
+            return this.value;
         }
-
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
-        }
-
 
         public override FactValueType GetFactValueType()
         {
             return FactValueType.DECIMAL;
-        }
-
-
-        public override void SetDefaultValue(T defaultValue)
-        {
-            this.defaultValue = (double)Convert.ChangeType(defaultValue, typeof(double));
         }
 
     }

@@ -5,7 +5,7 @@ using Nadia.C.Sharp.NodeFolder;
 
 namespace Nadia.C.Sharp.InferenceEngineFolder
 {
-    public class TopoSort<T>
+    public class TopoSort
     {
         /*
          *this topological sort method uses "Kahn's algorithm which is based on BFS(Breadth First Search)
@@ -13,19 +13,19 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          *due to the reason that the algorithm itself uses the dependency information and delete it while topological sorting
          *Hence, this method needs to create copy of dependencyMatrix.
          */
-        public static List<Node<T>> BfsTopoSort(Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix)
+        public static List<Node> BfsTopoSort(Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix)
         {
-            List<Node<T>> sortedNodeList = new List<Node<T>>();
-            int sizeOfMatrix = dependencyMatrix.Length / 2;
+            List<Node> sortedNodeList = new List<Node>();
+            int sizeOfMatrix = dependencyMatrix.GetLength(1);
             int[,] copyOfDependencyMatrix = CreateCopyOfDependencyMatrix(dependencyMatrix, sizeOfMatrix);
 
-            List<Node<T>> tempList = new List<Node<T>>();
-            List<Node<T>> SList = FillingSList(nodeMap, nodeIdMap, tempList, copyOfDependencyMatrix);
+            List<Node> tempList = new List<Node>();
+            List<Node> SList = FillingSList(nodeMap, nodeIdMap, tempList, copyOfDependencyMatrix);
 
 
             while (SList.Count != 0)
             {
-                Node<T> node = SList[0];
+                Node node = SList[0];
                 SList.RemoveAt(0);
                 sortedNodeList.Add(node);
                 int nodeId = node.GetNodeId();
@@ -82,9 +82,9 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         }
 
-        public static List<Node<T>> FillingSList(Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, List<Node<T>> tempList, int[,] dependencyMatrix)
+        public static List<Node> FillingSList(Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, List<Node> tempList, int[,] dependencyMatrix)
         {
-            int sizeOfMatrix = dependencyMatrix.Length / 2;
+            int sizeOfMatrix = dependencyMatrix.GetLength(1);
 
             for (int childRow = 0; childRow < sizeOfMatrix; childRow++)
             {
@@ -103,7 +103,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 }
                 if (count == sizeOfMatrix - 1) //exclude its own dependency 
                 {
-                    String tempNodeName = nodeIdMap[childRow];
+                    string tempNodeName = null;
+                    nodeIdMap.TryGetValue(childRow, out tempNodeName);
                     if (tempNodeName != null)
                     {
                         tempList.Add(nodeMap[tempNodeName]);
@@ -190,16 +191,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          *    This method does NOT have a mechanism to check if it is DAG or not yet.
          *    
          */
-        public static List<Node<T>> DfsTopoSort(Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix)
+        public static List<Node> DfsTopoSort(Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix)
         {
-            List<Node<T>> sortedList = new List<Node<T>>();
+            List<Node> sortedList = new List<Node>();
 
-            int[,] copyOfDependencyMatrix = CreateCopyOfDependencyMatrix(dependencyMatrix, dependencyMatrix.Length/2);
-            List<Node<T>> S = FillingSList(nodeMap, nodeIdMap, new List<Node<T>>(), copyOfDependencyMatrix);
+            int[,] copyOfDependencyMatrix = CreateCopyOfDependencyMatrix(dependencyMatrix, dependencyMatrix.GetLength(1));
+            List<Node> S = FillingSList(nodeMap, nodeIdMap, new List<Node>(), copyOfDependencyMatrix);
             List<int?> visitedList = new List<int?>();
             while (S.Count != 0)
             {
-                Node<T> node = S[0];
+                Node node = S[0];
                 S.RemoveAt(0);
 
                 sortedList.Add(node);
@@ -216,7 +217,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 });
                 childIdList.ForEach((id) =>
                 {
-                    Node<T> currentNode = nodeMap[nodeIdMap[id]];
+                    Node currentNode = nodeMap[nodeIdMap[id]];
                     if (!visitedList.Contains(id))
                     {
                         sortedList.Add(currentNode);
@@ -230,10 +231,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return sortedList;
         }
 
-        public static void Deepening(Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix, List<Node<T>> sortedList, List<int?> visitedList, int childId)
+        public static void Deepening(Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix, List<Node> sortedList, List<int?> visitedList, int childId)
         {
             List<int> childIdList = new List<int>();
-            Enumerable.Range(0, dependencyMatrix.Length / 2).ToList().ForEach((i) =>
+            Enumerable.Range(0, dependencyMatrix.GetLength(1)).ToList().ForEach((i) =>
             {
                 if (dependencyMatrix[childId, i] != 0)
                 {
@@ -243,7 +244,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
             childIdList.ForEach((id) =>
             {
-                Node<T> currentNode = nodeMap[nodeIdMap[id]];
+                Node currentNode = nodeMap[nodeIdMap[id]];
                 if (!visitedList.Contains(id))
                 {
                     sortedList.Add(currentNode);
@@ -276,10 +277,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * 
          */
 
-        public static List<Node<T>> DfsTopoSort(Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix, Dictionary<string, Record> recordMapOfNodes)
+        public static List<Node> DfsTopoSort(Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, int[,] dependencyMatrix, Dictionary<string, Record> recordMapOfNodes)
         {
 
-            List<Node<T>> sortedList = new List<Node<T>>();
+            List<Node> sortedList = new List<Node>();
 
             if (recordMapOfNodes == null || recordMapOfNodes.Count == 0)
             {
@@ -287,14 +288,14 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
             else
             {
-                List<Node<T>> visitedNodeList = new List<Node<T>>();
-                int[,] copyOfDependencyMatrix = CreateCopyOfDependencyMatrix(dependencyMatrix, dependencyMatrix.Length/2);
+                List<Node> visitedNodeList = new List<Node>();
+                int[,] copyOfDependencyMatrix = CreateCopyOfDependencyMatrix(dependencyMatrix, dependencyMatrix.GetLength(1));
 
-                List<Node<T>> S = FillingSList(nodeMap, nodeIdMap, new List<Node<T>>(), copyOfDependencyMatrix);
+                List<Node> S = FillingSList(nodeMap, nodeIdMap, new List<Node>(), copyOfDependencyMatrix);
 
                 while (S.Count != 0)
                 {
-                    Node<T> node = S[0];
+                    Node node = S[0];
                     S.RemoveAt(0);
                     visitedNodeList.Add(node);
                     Visit(node, sortedList, recordMapOfNodes, nodeMap, nodeIdMap, visitedNodeList, dependencyMatrix);
@@ -310,7 +311,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * and if a 'AND' child rule is 'FALSE' then the parent rule is 'FALSE'. 
          * AS result, visit more likely true 'OR' rule or more likely false 'AND' rule to determine a parent rule as fast as we can
          */
-        public static List<Node<T>> Visit(Node<T> node, List<Node<T>> sortedList, Dictionary<string, Record> recordMapOfNodes, Dictionary<string, Node<T>> nodeMap, Dictionary<int?, string> nodeIdMap, List<Node<T>> visitedNodeList, int[,] dependencyMatrix)
+        public static List<Node> Visit(Node node, List<Node> sortedList, Dictionary<string, Record> recordMapOfNodes, Dictionary<string, Node> nodeMap, Dictionary<int?, string> nodeIdMap, List<Node> visitedNodeList, int[,] dependencyMatrix)
         {
             if (node != null)
             {
@@ -319,7 +320,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 int orDependencyType = DependencyType.GetOr();
                 int andDependencyType = DependencyType.GetAnd();
                 List<int> dependencyMatrixAsList = new List<int>();
-                Enumerable.Range(0, dependencyMatrix.Length / 2).ToList().ForEach((index) => dependencyMatrixAsList.Add(dependencyMatrix[nodeId, index]));
+                Enumerable.Range(0, dependencyMatrix.GetLength(1)).ToList().ForEach((index) => dependencyMatrixAsList.Add(dependencyMatrix[nodeId, index]));
                 List<int> orOutDependency = (System.Collections.Generic.List<int>)Enumerable.Range(0, dependencyMatrixAsList.Count)
                                                                                             .Where(index => (dependencyMatrixAsList[index] & orDependencyType) == orDependencyType);
                     
@@ -329,7 +330,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                 if (orOutDependency.Count != 0 || andOutDependency.Count != 0)
                 {
-                    List<Node<T>> childRuleList = new List<Node<T>>();
+                    List<Node> childRuleList = new List<Node>();
                     Enumerable.Range(0, dependencyMatrixAsList.Count).ToList()
                               .Where(childIndex => dependencyMatrixAsList[childIndex] != 0)
                               .ToList()
@@ -346,7 +347,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                              * Therefore, looking for more likely 'TRUE' rule would be the shortest one rather than
                              * looking for more likely 'FALSE' rule in terms of processing time
                              */
-                            Node<T> theMostPositive = FindTheMostPositive(childRuleList, recordMapOfNodes, dependencyMatrixAsList);
+                            Node theMostPositive = FindTheMostPositive(childRuleList, recordMapOfNodes, dependencyMatrixAsList);
                             //                              Node theMostPositive = findTheMostPositive(childRuleList, recordMapOfNodes);
                             if (!visitedNodeList.Contains(theMostPositive))
                             {
@@ -368,7 +369,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                              */
                             while (childRuleList.Count != 0)
                             {
-                                Node<T> theMostNegative = FindTheMostNegative(childRuleList, recordMapOfNodes, dependencyMatrixAsList);
+                                Node theMostNegative = FindTheMostNegative(childRuleList, recordMapOfNodes, dependencyMatrixAsList);
                                 //                                  Node theMostNegative = findTheMostNegative(childRuleList, recordMapOfNodes);
                                 if (!visitedNodeList.Contains(theMostNegative))
                                 {
@@ -385,16 +386,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return sortedList;
         }
 
-        public static Node<T> FindTheMostPositive(List<Node<T>> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
+        public static Node FindTheMostPositive(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
         {
-            Node<T> theMostPositive = null;
+            Node theMostPositive = null;
             int yesCount = 0;
             int noCount = 0;
             float theMostPossibility = 0;
             int sum = 0;
             float result = 0;
 
-            foreach (Node<T> node in childNodeList)
+            foreach (Node node in childNodeList)
             {
                 string prefix = "";
                 int? dependencyType = dependencyMatrixAsList[node.GetNodeId()];
@@ -428,16 +429,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return theMostPositive;
         }
 
-        public static Node<T> FindTheMostPositive(List<Node<T>> childNodeList, Dictionary<string, Record> recordListOfNodes)
+        public static Node FindTheMostPositive(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes)
         {
-            Node<T> theMostPositive = null;
+            Node theMostPositive = null;
             int yesCount = 0;
             int noCount = 0;
             float theMostPossibility = 0;
             int sum = 0;
             float result = 0;
 
-            foreach (Node<T> node in childNodeList)
+            foreach (Node node in childNodeList)
             {
                 Record recordOfNode = recordListOfNodes[node.GetNodeName()];
                 yesCount = recordOfNode != null ? recordOfNode.GetTrueCount() : 0;
@@ -457,16 +458,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         }
 
-        public static Node<T> FindTheMostNegative(List<Node<T>> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
+        public static Node FindTheMostNegative(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
         {
-            Node<T> theMostNegative = null;
+            Node theMostNegative = null;
             int yesCount = 0;
             int noCount = 0;
             float theMostPossibility = 0;
             int sum = 0;
             float result = 0;
 
-            foreach (Node<T> node in childNodeList)
+            foreach (Node node in childNodeList)
             {
                 string prefix = "";
                 int dependencyType = dependencyMatrixAsList[node.GetNodeId()];
@@ -503,16 +504,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return theMostNegative;
         }
 
-        public static Node<T> FindTheMostNegative(List<Node<T>> childNodeList, Dictionary<string, Record> recordListOfNodes)
+        public static Node FindTheMostNegative(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes)
         {
-            Node<T> theMostNegative = null;
+            Node theMostNegative = null;
             int yesCount = 0;
             int noCount = 0;
             float theMostPossibility = 0;
             int sum = 0;
             float result = 0;
 
-            foreach (Node<T> node in childNodeList)
+            foreach (Node node in childNodeList)
             {
 
                 Record recordOfNode = recordListOfNodes[node.GetNodeName()];

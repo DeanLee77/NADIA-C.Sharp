@@ -3,7 +3,7 @@ using Nadia.C.Sharp.NodeFolder;
 
 namespace Nadia.C.Sharp.RuleParserFolder
 {
-    public interface IScanFeeder<T>
+    public interface IScanFeeder
     {
          void HandleParent(string parentText, int lineNumber);
          void HandleChild(string parentText, string childText, string firstKeywordsGroup, int lineNumber);
@@ -11,8 +11,8 @@ namespace Nadia.C.Sharp.RuleParserFolder
          void HandleListItem(string parentText, string itemText, MetaType? metaTyp);
         //   void HandleIterateCheck(string iterateParent, string parentText, string checkText, int lineNumber);
          string HandleWarning(string parentText);
-         NodeSet<T> GetNodeSet();
-         void SetNodeSet(NodeSet<T> ns);
+         NodeSet GetNodeSet();
+         void SetNodeSet(NodeSet ns);
          int[,] CreateDependencyMatrix();
     }
 }

@@ -1,41 +1,28 @@
 ﻿<Properties StartupConfiguration="{E5A172D3-CE33-4031-84EA-35835913261E}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Testing Folder/Test1/NUnitTestClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Testing Folder/Test1/TestClass.cs">
     <Files>
-      <File FileName="Program.cs" Line="17" Column="1" />
-      <File FileName="RuleParser Folder/RuleSetParser.cs" Line="48" Column="14" />
-      <File FileName="Testing Folder/NodeObject_For_Inference_Test.cs" Line="20" Column="10" />
-      <File FileName="RuleParser Folder/RuleSetReader.cs" Line="14" Column="10" />
-      <File FileName="FactValue Folder/FactValue.cs" Line="15" Column="42" />
-      <File FileName="Testing Folder/Test1/NUnitTestClass.cs" Line="21" Column="1" />
+      <File FileName="Program.cs" Line="21" Column="26" />
+      <File FileName="Testing Folder/Test1/TestClass.cs" Line="77" Column="1" />
+      <File FileName="Node Folder/Node.cs" Line="95" Column="61" />
+      <File FileName="Node Folder/MetadataLine.cs" Line="1" Column="1" />
+      <File FileName="Node Folder/NodeSet.cs" Line="67" Column="1" />
+      <File FileName="InferenceEngine Folder/InferenceEngine.cs" Line="194" Column="47" />
+      <File FileName="FactValue Folder/FactValue.cs" Line="134" Column="1" />
+      <File FileName="Testing Folder/NodeObject_For_Inference_Test.cs" Line="27" Column="40" />
+      <File FileName="FactValue Folder/FactBooleanValue.cs" Line="18" Column="9" />
+      <File FileName="FactValue Folder/FactDateValue.cs" Line="18" Column="12" />
+      <File FileName="Testing Folder/Test1/Wedding Planner.txt" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="Nadia.C.Sharp" expanded="True">
-            <Node name="Nadia.C.Sharp" expanded="True">
-              <Node name="RuleParser Folder" expanded="True" />
-              <Node name="Testing Folder" expanded="True">
-                <Node name="Test1" expanded="True">
-                  <Node name="NUnitTestClass.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.UnitTesting.TestPad">
-        <State name="__root__">
-          <Node name="Nadia.C.Sharp" expanded="True">
-            <Node name="Nadia.C.Sharp" selected="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/Main.cs" relfile="Testing Folder/Test1/Main.cs" line="10" column="21" />
+      <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/RuleParser Folder/RuleSetScanner.cs" relfile="RuleParser Folder/RuleSetScanner.cs" line="118" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs" relfile="InferenceEngine Folder/TopoSort.cs" line="198" column="45" />
+      <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs" relfile="InferenceEngine Folder/TopoSort.cs" line="292" column="49" />
+      <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="75" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="77" column="151" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

@@ -6,7 +6,7 @@ using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public abstract class Node <T>
+    public abstract class Node 
     {
 
         protected static int staticNodeId = 0;
@@ -14,7 +14,7 @@ namespace Nadia.C.Sharp.NodeFolder
         protected string nodeName;
         protected int nodeLine;
         protected string variableName;
-        protected FactValue<T> value;
+        protected FactValue value;
         protected Tokens tokens;
 
         public Node(string parentText, Tokens tokens)
@@ -28,7 +28,8 @@ namespace Nadia.C.Sharp.NodeFolder
 
         public abstract void Initialisation(string parentText, Tokens tokens);
         public abstract LineType GetLineType();
-        public abstract FactValue<T> SelfEvaluate(Dictionary<string, FactValue<T>> workingMemory, Jint.Engine nashorn);
+
+        public abstract FactValue SelfEvaluate(Dictionary<string, FactValue> workingMemory, Jint.Engine nashorn);
 
         public void SetNodeLine(int nodeLine)
         {
@@ -66,7 +67,7 @@ namespace Nadia.C.Sharp.NodeFolder
             this.variableName = newVariableName;
         }
 
-        public FactValue<T> GetFactValue()
+        public FactValue GetFactValue()
         {
             return this.value;
         }
@@ -79,31 +80,31 @@ namespace Nadia.C.Sharp.NodeFolder
                     int intValue = 0;
                     Int32.TryParse(lastToken, out intValue);
 
-                    this.value = FactValue<T>.Parse(intValue);
+                    this.value = FactValue.Parse(intValue);
                     break;
                 case "Do":
                     double doubleValue = 0.0;
                     Double.TryParse(lastToken, out doubleValue);
 
-                    this.value = FactValue<T>.Parse(doubleValue);
+                    this.value = FactValue.Parse(doubleValue);
                     break;
                 case "Da":
                     DateTime dateValue;
                     DateTime.TryParseExact(lastToken, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dateValue);
 
-                    this.value = FactValue<T>.Parse(dateValue);
+                    this.value = FactValue.Parse(dateValue);
                     break;
                 case "Url":
-                    this.value = FactValue<T>.ParseURL(lastToken);
+                    this.value = FactValue.ParseURL(lastToken);
                     break;
                 case "Id":
-                    this.value = FactValue<T>.ParseUUID(lastToken);
+                    this.value = FactValue.ParseUUID(lastToken);
                     break;
                 case "Ha":
-                    this.value = FactValue<T>.ParseHash(lastToken);
+                    this.value = FactValue.ParseHash(lastToken);
                     break;
                 case "Q":
-                    this.value = FactValue<T>.ParseDefiString(lastToken);
+                    this.value = FactValue.ParseDefiString(lastToken);
                     break;
                 case "L":
                 case "M":
@@ -111,7 +112,7 @@ namespace Nadia.C.Sharp.NodeFolder
                 case "C":
                     if (this.IsBoolean(lastToken))
                     {
-                        this.value = string.Equals(lastToken, "false", StringComparison.OrdinalIgnoreCase)? FactValue<T>.Parse(false) : FactValue<T>.Parse(true);
+                        this.value = string.Equals(lastToken, "false", StringComparison.OrdinalIgnoreCase)? FactValue.Parse(false) : FactValue.Parse(true);
                     }
                     else
                     {
@@ -121,17 +122,17 @@ namespace Nadia.C.Sharp.NodeFolder
                         if (match.Success)
                         {
                             string newS = match.Groups[2].Value;
-                            this.value = FactValue<T>.ParseDefiString(newS);
+                            this.value = FactValue.ParseDefiString(newS);
                         }
                         else
                         {
-                            this.value = FactValue<T>.Parse(lastToken);
+                            this.value = FactValue.Parse(lastToken);
                         }
                     }
                     break;
             }
         }
-        public void SetValue(FactValue<T> fv)
+        public void SetValue(FactValue fv)
         {
             this.value = fv;
         }

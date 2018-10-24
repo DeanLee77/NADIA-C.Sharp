@@ -1,19 +1,16 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactHashValue<T> : FactValue<T>
+    public class FactHashValue : FactValue
     {
-        private String value;
-        private String defaultValue;
+        private string value;
 
-        public FactHashValue(String hash)
+        public FactHashValue(string hash)
         {
             SetValue(hash);
         }
 
-
-
-        public void SetValue(String hash)
+        public void SetValue(string hash)
         {
             this.value = hash;
         }
@@ -24,23 +21,9 @@ namespace Nadia.C.Sharp.FactValueFolder
             return FactValueType.HASH;
         }
 
-
-        public override void SetDefaultValue(T defaultValue)
+        public string GetValue()
         {
-            this.defaultValue = (string)Convert.ChangeType(defaultValue, typeof(string));
+            return this.value;
         }
-
-
-        public override T GetValue()
-        {
-            return (T)Convert.ChangeType(this.value, typeof(T));
-        }
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
-        }
-
     }
 }

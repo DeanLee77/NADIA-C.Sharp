@@ -1,10 +1,9 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactStringValue<T> : FactValue<T>
+    public class FactStringValue : FactValue
     {
         private string value;
-        private string defaultValue;
 
         public FactStringValue(string s)
         {
@@ -23,23 +22,10 @@ namespace Nadia.C.Sharp.FactValueFolder
             return FactValueType.STRING;
         }
 
-
-        public override void SetDefaultValue(T defaultValue)
-        {
-            this.defaultValue = defaultValue.ToString();
-        }
-
-
-        public override T GetValue()
+        public string GetValue()
         {
             // TODO Auto-generated method stub
-            return (T)Convert.ChangeType(this.value, typeof(T));
-        }
-
-        public override T GetDefaultValue()
-        {
-            // TODO Auto-generated method stub
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
+            return this.value;
         }
     }
 }

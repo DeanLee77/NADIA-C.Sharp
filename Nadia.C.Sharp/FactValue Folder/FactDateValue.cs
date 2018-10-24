@@ -1,43 +1,35 @@
 ﻿using System;
+using System.Text.RegularExpressions;
+
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactDateValue<T> : FactValue<T>
+    public class FactDateValue : FactValue
     {
         private DateTime value;
-        private DateTime defaultValue;
 
         public FactDateValue(DateTime date)
         {
             SetValue(date);
         }
+        //public FactDateValue(FactValue fv)
+        //{
+        //    string[] dateTimeInString = Regex.Split(Regex.Split(FactValue.GetValueInString(FactValueType.DATE, )))
+        //    this.value = new DateTime
+        //}
 
         public void SetValue(DateTime cal)
         {
             this.value = cal;
         }
 
-
-        public override T GetValue()
+        public DateTime GetValue()
         {
-            return (T)Convert.ChangeType(this.value, typeof(T));
+            return this.value;
         }
-
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
-        }
-
 
         public override FactValueType GetFactValueType()
         {
             return FactValueType.DATE;
-        }
-
-        public override void SetDefaultValue(T defaultValue)
-        {
-            this.defaultValue = (DateTime)Convert.ChangeType(defaultValue, typeof(DateTime));
         }
 
     }

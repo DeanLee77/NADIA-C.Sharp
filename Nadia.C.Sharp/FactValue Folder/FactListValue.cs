@@ -1,51 +1,47 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactListValue<T> : FactValue<T> //where T: IList
+    public class FactListValue : FactValue //where T: IList
     {
-        private T listValue;
-        private FactValue<T> defaultValue;
+        private List<FactValue> listValue;
+        private FactValue defaultValue;
 
-        public FactListValue(T i)
+        public FactListValue(List<FactValue> i)
         {
-            SetListValue(i);
+            SetValue(i);
         }
 
-        public void SetListValue(T listValue)
+        public void SetValue(List<FactValue> listValue)
         {
             this.listValue = listValue;
         }
 
-        public void AddFactValueToListValue(FactValue<T> fv)
+        public void AddFactValueToListValue(FactValue fv)
         {
-            (this.listValue as List<FactValue<T>>).Add(fv);
+            this.listValue.Add(fv);
         }
-
 
         public override FactValueType GetFactValueType()
         {
             return FactValueType.LIST;
         }
 
-
-
-        public override void SetDefaultValue(T defaultValue)
+        public void SetDefaultValue(FactValue defaultValue)
         {
-            this.defaultValue = (FactValue<T>)Convert.ChangeType(defaultValue, typeof(FactValue<T>));
+            this.defaultValue = defaultValue;
         }
 
-        public override T GetValue()
+        public List<FactValue> GetValue()
         {
-            return (T)Convert.ChangeType(this.listValue, typeof(T));
+            return this.listValue;
         }
 
-        public override T GetDefaultValue()
+        public FactValue GetDefaultValue()
         {
 
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
+            return this.defaultValue;
         }
 
     }

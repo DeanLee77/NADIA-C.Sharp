@@ -117,7 +117,7 @@
     <Compile Include="RuleParser Folder\RuleSetReader.cs" />
     <Compile Include="RuleParser Folder\RuleSetScanner.cs" />
     <Compile Include="Testing Folder\NodeObject_For_Inference_Test.cs" />
-    <Compile Include="Testing Folder\Test1\NUnitTestClass.cs" />
+    <Compile Include="Testing Folder\Test1\TestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Node Folder\" />
@@ -131,6 +131,9 @@
     <None Include="packages.config" />
     <None Include="App.config" />
     <None Include="Testing Folder\Test1\Tokenizer_Testing.txt" />
+    <None Include="Testing Folder\Test1\ToposortedNodeName.txt" />
+    <None Include="Testing Folder\Test1\Wedding Planner.txt" />
+    <None Include="Testing Folder\Test1\Wedding_Planner Inference Test.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

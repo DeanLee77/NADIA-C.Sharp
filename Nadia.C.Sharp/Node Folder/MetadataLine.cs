@@ -7,7 +7,7 @@ using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class MetadataLine<T>: Node<T>
+    public class MetadataLine: Node
     {
         //  Pattern metaPatternMatcher = Pattern.compile("^ULU?[OU]?[NoDaMLDe]?");
         /*
@@ -77,44 +77,44 @@ namespace Nadia.C.Sharp.NodeFolder
                         DateTime factValueInDate;
                         DateTime.TryParseExact(tempArray[1], "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out factValueInDate);
 
-                        this.value = FactValue<T>.Parse(factValueInDate);
+                        this.value = FactValue.Parse(factValueInDate);
                     }
                     else if (this.IsDouble(lastTokenString))
                     {
                         double tempDouble = Double.Parse(tempArray[1]);
-                        this.value = FactValue<T>.Parse(tempDouble);
+                        this.value = FactValue.Parse(tempDouble);
                     }
                     else if (this.IsInteger(lastTokenString))
                     {
                         int tempInt = Int32.Parse(tempArray[1]);
-                        this.value = FactValue<T>.Parse(tempInt);
+                        this.value = FactValue.Parse(tempInt);
                     }
                     else if (this.IsBoolean(tempArray[1]))
                     {
-                        this.value = tempArray[1].ToLower().Equals("false") ? FactValue<T>.Parse(false) : FactValue<T>.Parse(true);
+                        this.value = tempArray[1].ToLower().Equals("false") ? FactValue.Parse(false) : FactValue.Parse(true);
                     }
                     else if (this.IsHash(lastTokenString))
                     {
-                        this.value = FactValue<T>.ParseHash(tempArray[1]);
+                        this.value = FactValue.ParseHash(tempArray[1]);
                     }
                     else if (this.IsURL(lastTokenString))
                     {
-                        this.value = FactValue<T>.ParseURL(tempArray[1]);
+                        this.value = FactValue.ParseURL(tempArray[1]);
                     }
                     else if (this.IsGUID(lastTokenString))
                     {
-                        this.value = FactValue<T>.ParseUUID(tempArray[1]);
+                        this.value = FactValue.ParseUUID(tempArray[1]);
                     }
                 }
                 else if (tempStr.Equals("AS"))
                 {
                     if (tempArray[1].Equals("LIST"))
                     {
-                        this.value = FactValue<T>.ParseList((T)Convert.ChangeType(new List<FactValue<T>>(), typeof(T)));
+                        this.value = FactValue.Parse(new List<FactValue>());
                     }
                     else
                     {
-                        this.value = FactValue<T>.Parse("WARNING");
+                        this.value = FactValue.Parse("WARNING");
                     }
                 }
 
@@ -134,46 +134,46 @@ namespace Nadia.C.Sharp.NodeFolder
 
                     if (FactValueType.LIST.ToString().Equals(tempStr))
                     {
-                        List<FactValue<T>> valueList = new List<FactValue<T>>();
-                        FactValue<T> tempValue;
+                        List<FactValue> valueList = new List<FactValue>();
+                        FactValue tempValue;
                         if (this.IsDate(lastTokenString)) // tempStr2 is date value
                         {
 
                             DateTime factValueInDate;
                             DateTime.TryParseExact(tempStr2, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out factValueInDate);
-                            tempValue = FactValue<T>.Parse(factValueInDate);
+                            tempValue = FactValue.Parse(factValueInDate);
                             valueList.Add(tempValue);
                         }
                         else if (this.IsDouble(lastTokenString)) //tempStr2 is double value
                         {
                             double tempDouble = Double.Parse(tempStr2);
-                            tempValue = FactValue<T>.Parse(tempDouble);
+                            tempValue = FactValue.Parse(tempDouble);
                             valueList.Add(tempValue);
                         }
                         else if (this.IsInteger(lastTokenString)) //tempStr2 is integer value
                         {
                             int tempInt = Int32.Parse(tempStr2);
-                            tempValue = FactValue<T>.Parse(tempInt);
+                            tempValue = FactValue.Parse(tempInt);
                             valueList.Add(tempValue);
                         }
                         else if (this.IsHash(lastTokenString)) //tempStr2 is integer value
                         {
 
-                            tempValue = FactValue<T>.ParseHash(tempStr2);
+                            tempValue = FactValue.ParseHash(tempStr2);
                             valueList.Add(tempValue);
 
                         }
                         else if (this.IsURL(lastTokenString)) //tempStr2 is integer value
                         {
 
-                            tempValue = FactValue<T>.ParseURL(tempStr2);
+                            tempValue = FactValue.ParseURL(tempStr2);
                             valueList.Add(tempValue);
 
                         }
                         else if (this.IsGUID(lastTokenString)) //tempStr2 is integer value
                         {
 
-                            tempValue = FactValue<T>.ParseUUID(tempStr2);
+                            tempValue = FactValue.ParseUUID(tempStr2);
                             valueList.Add(tempValue);
 
                         }
@@ -181,30 +181,29 @@ namespace Nadia.C.Sharp.NodeFolder
                         {
                             if (tempStr2.ToLower().Equals("false"))
                             {
-                                tempValue = FactValue<T>.Parse(false);
+                                tempValue = FactValue.Parse(false);
 
                             }
                             else
                             {
-                                tempValue = FactValue<T>.Parse(true);
+                                tempValue = FactValue.Parse(true);
                             }
                             valueList.Add(tempValue);
 
                         }
                         else // tempStr2 is String value
                         {
-                            tempValue = FactValue<T>.Parse(tempStr2);
+                            tempValue = FactValue.Parse(tempStr2);
                             valueList.Add(tempValue);
                         }
 
-                        this.value = FactValue<T>.ParseList((T)Convert.ChangeType(valueList, typeof(T)));
-                        this.value.SetDefaultValue((T)Convert.ChangeType(tempValue, typeof(T)));
+                        this.value = FactValue.Parse(valueList);
+                        ((FactListValue)this.value).SetDefaultValue(tempValue);
 
                     }
                     else if (FactValueType.TEXT.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(tempStr2);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(tempStr2, typeof(T)));
+                        this.value = FactValue.Parse(tempStr2);
                     }
                     else if (FactValueType.DATE.ToString().Equals(tempStr))
                     {
@@ -212,49 +211,41 @@ namespace Nadia.C.Sharp.NodeFolder
                         DateTime factValueInDate;
                         DateTime.TryParseExact(tempStr2, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out factValueInDate);
 
-                        this.value = FactValue<T>.Parse(factValueInDate);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(factValueInDate, typeof(T)));
+                        this.value = FactValue.Parse(factValueInDate);
                     }
                     else if (FactValueType.NUMBER.ToString().Equals(tempStr))
                     {
                         int factValueInInteger = Int32.Parse(tempStr2);
-                        this.value = FactValue<T>.Parse(factValueInInteger);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(factValueInInteger, typeof(T)));
+                        this.value = FactValue.Parse(factValueInInteger);
                     }
                     else if (FactValueType.DECIMAL.ToString().Equals(tempStr))
                     {
                         double factValueInDouble = Double.Parse(tempStr2);
-                        this.value = FactValue<T>.Parse(factValueInDouble);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(factValueInDouble, typeof(T)));
+                        this.value = FactValue.Parse(factValueInDouble);
 
                     }
                     else if (FactValueType.BOOLEAN.ToString().Equals(tempStr))
                     {
                         if (tempStr2.ToLower().Equals("true"))
                         {
-                            this.value = FactValue<T>.Parse(true);
-                            this.value.SetDefaultValue((T)Convert.ChangeType(true, typeof(T)));
+                            this.value = FactValue.Parse(true);
                         }
                         else
                         {
-                            this.value = FactValue<T>.Parse(false);
-                            this.value.SetDefaultValue((T)Convert.ChangeType(false, typeof(T)));
+                            this.value = FactValue.Parse(false);
                         }
                     }
                     else if (FactValueType.URL.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.ParseURL(tempStr2);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(tempStr2, typeof(T)));
+                        this.value = FactValue.ParseURL(tempStr2);
                     }
                     else if (FactValueType.HASH.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.ParseHash(tempStr2);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(tempStr2, typeof(T)));
+                        this.value = FactValue.ParseHash(tempStr2);
                     }
                     else if (FactValueType.UUID.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.ParseUUID(tempStr2);
-                        this.value.SetDefaultValue((T)Convert.ChangeType(tempStr2, typeof(T)));
+                        this.value = FactValue.ParseUUID(tempStr2);
                     }
                 }
                 else
@@ -265,27 +256,27 @@ namespace Nadia.C.Sharp.NodeFolder
                      */
                     if (FactValueType.LIST.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.ParseList((T)Convert.ChangeType(new List<FactValue<T>>(), typeof(T)));
+                        this.value = FactValue.Parse(new List<FactValue>());
                     }
                     else if (FactValueType.TEXT.ToString().Equals(tempStr) || FactValueType.URL.ToString().Equals(tempStr) || FactValueType.HASH.ToString().Equals(tempStr) || FactValueType.UUID.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(" ");
+                        this.value = FactValue.Parse(" ");
                     }
                     else if (FactValueType.DATE.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(DateTime.MinValue);
+                        this.value = FactValue.Parse(DateTime.MinValue);
                     }
                     else if (FactValueType.NUMBER.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(-1111);
+                        this.value = FactValue.Parse(-1111);
                     }
                     else if (FactValueType.DECIMAL.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(-0.1111);
+                        this.value = FactValue.Parse(-0.1111);
                     }
                     else if (FactValueType.BOOLEAN.ToString().Equals(tempStr))
                     {
-                        this.value = FactValue<T>.Parse(Boolean.TrueString);
+                        this.value = FactValue.Parse(Boolean.TrueString);
                     }
 
                 }
@@ -321,9 +312,9 @@ namespace Nadia.C.Sharp.NodeFolder
         }
 
 
-        public override FactValue<T> SelfEvaluate(Dictionary<string, FactValue<T>> workingMemory, Jint.Engine nashorn)
+        public override FactValue SelfEvaluate(Dictionary<string, FactValue> workingMemory, Jint.Engine nashorn)
         {
-            FactValue<T> fv = null;
+            FactValue fv = null;
             return fv;
         }
 

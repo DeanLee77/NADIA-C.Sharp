@@ -6,7 +6,7 @@ using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class ValueConclusionLine<T> : Node<T>
+    public class ValueConclusionLine : Node
     {
         private bool isPlainStatementFormat;
 
@@ -69,9 +69,9 @@ namespace Nadia.C.Sharp.NodeFolder
         }
 
 
-        public override FactValue<T> SelfEvaluate(Dictionary<string, FactValue<T>> workingMemory, Jint.Engine nashorn)
+        public override FactValue SelfEvaluate(Dictionary<string, FactValue> workingMemory, Jint.Engine nashorn)
         {
-            FactValue<T> fv = null;
+            FactValue fv = null;
             /*
              * Negation and Known type are a part of dependency 
              * hence, only checking its variableName value against the workingMemory is necessary.
@@ -91,17 +91,17 @@ namespace Nadia.C.Sharp.NodeFolder
                 else if (tokens.tokensList.Any((s)=> s.Equals("IS IN LIST:")))
                 {
                     bool lineValue = false;
-                    string listName = this.GetFactValue().GetValue().ToString();
+                    string listName = FactValue.GetValueInString(this.GetFactValue().GetFactValueType(), this.GetFactValue());
                     if (workingMemory[listName] != null)
                     {
-                        FactValue<T> variableValueFromWorkingMemory = workingMemory[this.variableName];
+                        FactValue variableValueFromWorkingMemory = workingMemory[this.variableName];
                         lineValue = variableValueFromWorkingMemory != null ?
-                        (workingMemory[listName].GetValue() as List<T>).Any((item) =>(item as FactStringValue<T>).GetValue().Equals(variableValueFromWorkingMemory.GetValue().ToString()))
+                            ((FactListValue)workingMemory[listName]).GetValue().Any((item) =>(item as FactStringValue).GetValue().Equals(FactValue.GetValueInString(variableValueFromWorkingMemory.GetFactValueType(), variableValueFromWorkingMemory)))
                         :
-                        (workingMemory[listName].GetValue() as List<T>).Any((item) => (item as FactStringValue<T>).GetValue().Equals(this.variableName));
+                            ((FactListValue)workingMemory[listName]).GetValue().Any((item) => (item as FactStringValue).GetValue().Equals(this.variableName));
                     }
 
-                    fv = FactValue<T>.Parse(lineValue);
+                    fv = FactValue.Parse(lineValue);
                 }
             }
 

@@ -1,20 +1,18 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactURLValue<T> : FactValue<T>
+    public class FactURLValue : FactValue
     {
 
-        private String value;
-        private String defaultValue;
+        private string value;
 
-        public FactURLValue(String url)
+        public FactURLValue(string url)
         {
             SetValue(url);
         }
 
 
-
-        public void SetValue(String url)
+        public void SetValue(string url)
         {
             this.value = url;
         }
@@ -24,25 +22,9 @@ namespace Nadia.C.Sharp.FactValueFolder
             return FactValueType.URL;
         }
 
-
-
-        public override void SetDefaultValue(T defaultValue)
+        public string GetValue()
         {
-             this.defaultValue = (string)Convert.ChangeType(defaultValue, typeof(string));
+            return this.value;
         }
-
-
-
-        public override T GetValue()
-        {
-            return (T)Convert.ChangeType(this.value, typeof(T));
-        }
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
-        }
-
     }
 }

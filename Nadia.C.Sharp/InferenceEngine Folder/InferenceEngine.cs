@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Nadia.C.Sharp.FactValueFolder;
 using Nadia.C.Sharp.NodeFolder;
+using Nadia.C.Sharp.RuleParserFolder;
 using Newtonsoft.Json.Linq;
 
 namespace Nadia.C.Sharp.InferenceEngineFolder
 {
-    public class InferenceEngine<T>
+    public class InferenceEngine
     {
-        private NodeSet<T> nodeSet;
-        private Node<T> targetNode;
-        private AssessmentState<T> ast;
-        private Assessment<T> ass;
-        private List<Node<T>> nodeFactList;
+        private NodeSet nodeSet;
+        private Node targetNode;
+        private AssessmentState ast;
+        private Assessment ass;
+        private List<Node> nodeFactList;
         private Jint.Engine scriptEngine = new Jint.Engine();
 
 
@@ -25,55 +26,55 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         {
 
         }
-        public InferenceEngine(NodeSet<T> nodeSet)
+        public InferenceEngine(NodeSet nodeSet)
         {
             this.nodeSet = nodeSet;
             ast = NewAssessmentState();
-            Dictionary<string, FactValue<T>> tempFactMap = nodeSet.GetFactMap();
-            Dictionary<string, FactValue<T>> tempWorkingMemory = ast.GetWorkingMemory();
+            Dictionary<string, FactValue> tempFactMap = nodeSet.GetFactMap();
+            Dictionary<string, FactValue> tempWorkingMemory = ast.GetWorkingMemory();
 
             if (!(tempFactMap.Count == 0))
             {
                 tempFactMap.Keys.ToList().ForEach((key) => tempWorkingMemory.Add(key, tempFactMap[key])); 
             }
-            nodeFactList = new List<Node<T>>(nodeSet.GetNodeSortedList().Count * 2); // contains all rules set as a fact given by a user from a ruleList
+            nodeFactList = new List<Node>(nodeSet.GetNodeSortedList().Count * 2); // contains all rules set as a fact given by a user from a ruleList
 
         }
 
-        public void AddNodeSet(NodeSet<T> nodeSet2)
+        public void AddNodeSet(NodeSet nodeSet2)
         {
 
         }
 
-        public void SetNodeSet(NodeSet<T> nodeSet)
+        public void SetNodeSet(NodeSet nodeSet)
         {
             this.nodeSet = nodeSet;
             ast = NewAssessmentState();
-            Dictionary<string, FactValue<T>> tempFactMap = nodeSet.GetFactMap();
-            Dictionary<string, FactValue<T>> tempWorkingMemory = ast.GetWorkingMemory();
+            Dictionary<string, FactValue> tempFactMap = nodeSet.GetFactMap();
+            Dictionary<string, FactValue> tempWorkingMemory = ast.GetWorkingMemory();
 
             if (!(tempFactMap.Count == 0))
             {
                 tempFactMap.Keys.ToList().ForEach((key) => tempWorkingMemory.Add(key, tempFactMap[key])); 
             }
-            nodeFactList = new List<Node<T>>(nodeSet.GetNodeSortedList().Count * 2); // contains all rules set as a fact given by a user from a ruleList
+            nodeFactList = new List<Node>(nodeSet.GetNodeSortedList().Count * 2); // contains all rules set as a fact given by a user from a ruleList
 
         }
 
-        public NodeSet<T> GetNodeSet()
+        public NodeSet GetNodeSet()
         {
             return this.nodeSet;
         }
 
-        public AssessmentState<T> GetAssessmentState()
+        public AssessmentState GetAssessmentState()
         {
             return this.ast;
         }
 
-        public AssessmentState<T> NewAssessmentState()
+        public AssessmentState NewAssessmentState()
         {
             int initialSize = nodeSet.GetNodeSortedList().Count() * 2;
-            AssessmentState<T> ast = new AssessmentState<T>();
+            AssessmentState ast = new AssessmentState();
             List<string> inclusiveList = new List<string>(initialSize);
             List<string> summaryList = new List<string>(initialSize);
             ast.SetInclusiveList(inclusiveList);
@@ -82,12 +83,12 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return ast;
         }
 
-        public void SetAssessment(Assessment<T> ass)
+        public void SetAssessment(Assessment ass)
         {
             this.ass = ass;
         }
 
-        public Assessment<T> GetAssessment()
+        public Assessment GetAssessment()
         {
             return this.ass;
         }
@@ -109,7 +110,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 FactValueType nodeFactValueType = node.GetFactValue().GetFactValueType();
                 if (nodeFactValueType.Equals(FactValueType.BOOLEAN) || nodeFactValueType.Equals(FactValueType.STRING))
                 {
-                    variableNameList.Add(node.GetFactValue().GetValue().ToString());
+                    variableNameList.Add(FactValue.GetValueInString(node.GetFactValue().GetFactValueType(),node.GetFactValue()));
                 }
             });
 
@@ -119,11 +120,11 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         /*
          * this method allows to store all information via GUI even before starting Inference process. 
          */
-        public void AddNodeFact(string nodeVariableName, FactValue<T> fv)
+        public void AddNodeFact(string nodeVariableName, FactValue fv)
         {
             nodeSet.GetNodeMap().Values.ToList().ForEach((node) =>
             {
-                if (node.GetVariableName().Equals(nodeVariableName) || node.GetFactValue().GetValue().ToString().Equals(nodeVariableName))
+                if (node.GetVariableName().Equals(nodeVariableName) || FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue()).Equals(nodeVariableName))
                 {
                     nodeFactList.Add(node);
                 }
@@ -137,16 +138,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * this method is to find all relevant Nodes(immediate child nodes of the most parent) with given information from a user
          * while finding out all relevant factors, all given information will be stored in AssessmentState.workingMemory
          */
-        public List<Node<T>> FindRelevantFactors()
+        public List<Node> FindRelevantFactors()
         {
-            List<Node<T>> relevantFactorList = new List<Node<T>>();
+            List<Node> relevantFactorList = new List<Node>();
 
             if (nodeFactList.Count != 0)
             {
                 nodeFactList.ForEach((node) => {
                     if (nodeSet.GetDependencyMatrix().GetFromParentDependencyList(node.GetNodeId()).Count != 0)
                     {
-                        Node<T> relevantNode = AuxFindRelevantFactors(node);
+                        Node relevantNode = AuxFindRelevantFactors(node);
                         relevantFactorList.Add(relevantNode);
                     }
                 });
@@ -154,15 +155,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return relevantFactorList;
         }
 
-        public Node<T> AuxFindRelevantFactors(Node<T> node)
+        public Node AuxFindRelevantFactors(Node node)
         {
-            Node<T> relevantFactorNode = null;
+            Node relevantFactorNode = null;
             List<int> incomingDependencyList = nodeSet.GetDependencyMatrix().GetFromParentDependencyList(node.GetNodeId()); // it contains all id of parent node where dependency come from
             if (incomingDependencyList.Count != 0)
             {
                 for (int i = 0; i < incomingDependencyList.Count; i++)
                 {
-                    Node<T> parentNode = nodeSet.GetNodeMap()[nodeSet.GetNodeIdMap()[incomingDependencyList[i]]];
+                    Node parentNode = nodeSet.GetNodeMap()[nodeSet.GetNodeIdMap()[incomingDependencyList[i]]];
                   if (nodeSet.GetDependencyMatrix().GetFromParentDependencyList(parentNode.GetNodeId()).Count!= 0
                             && !parentNode.GetNodeName().Equals(nodeSet.GetNodeSortedList()[0].GetNodeName()))
                     {
@@ -179,7 +180,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * this method uses 'BACKWARD-CHAININING', and it will return node to be asked of a given assessment, which has not been determined and 
          * does not have any child nodes if the goal node of the given assessment has still not been determined.
          */
-        public Node<T> GetNextQuestion(Assessment<T> ass)
+        public Node GetNextQuestion(Assessment ass)
         {
             if (!ast.GetInclusiveList().Contains(ass.GetGoalNode().GetNodeName()))
             {
@@ -189,11 +190,14 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             /*
              * Default goal rule of a rule set which is a parameter of InferenceEngine will be evaluated by forwardChaining when any rule is evaluated within the rule set
              */
-            if (ast.GetWorkingMemory()[ass.GetGoalNode().GetNodeName()] == null || !ast.AllMandatoryNodeDetermined())
+            FactValue goalRuleValueInWorkingMemory = null;
+            ast.GetWorkingMemory().TryGetValue(ass.GetGoalNode().GetNodeName(), out goalRuleValueInWorkingMemory);
+
+            if (goalRuleValueInWorkingMemory == null || !ast.AllMandatoryNodeDetermined())
             {
                 for (int i = ass.GetGoalNodeIndex(); i < nodeSet.GetNodeSortedList().Count; i++)
                 {
-                    Node<T> node = nodeSet.GetNodeSortedList()[i];
+                    Node node = nodeSet.GetNodeSortedList()[i];
 
 
                     /*
@@ -225,7 +229,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                     if(nodeId != ass.GetGoalNode().GetNodeId() && node.GetLineType().Equals(LineType.ITERATE) && !ast.GetWorkingMemory().ContainsKey(node.GetNodeName()))
                     {   
-                        FactValue<T> givenListNameFv = this.ast.GetWorkingMemory()[(node as IterateLine<T>).GetGivenListName()];
+                        FactValue givenListNameFv = this.ast.GetWorkingMemory()[(node as IterateLine).GetGivenListName()];
                         String givenListName = "";
                         if(givenListNameFv != null)
                         {
@@ -233,7 +237,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                         }
                         if(givenListName.Length > 0)
                         {
-                            (node as IterateLine<T>).IterateFeedAnswers(givenListName, this.nodeSet, this.ast, ass);
+                            (node as IterateLine).IterateFeedAnswers(givenListName, this.nodeSet, this.ast, ass);
                         }
                         else
                         {
@@ -242,7 +246,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                                 ass.SetNodeToBeAsked(node);
                                 int indexOfRuleToBeAsked = i;
 
-                                return (node as IterateLine<T>).GetIterateNextQuestion(this.nodeSet, this.ast);
+                                return (node as IterateLine).GetIterateNextQuestion(this.nodeSet, this.ast);
                             }
                         }                           
                     }
@@ -265,7 +269,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         }
     
     
-        public List<string> GetQuestionsFromNodeToBeAsked(Node<T> nodeToBeAsked)
+        public List<string> GetQuestionsFromNodeToBeAsked(Node nodeToBeAsked)
         {
             List<string> questionList = new List<string>();
             LineType lineTypeOfNodeToBeAsked = nodeToBeAsked.GetLineType();
@@ -287,15 +291,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             // ComparionLine type
             else if (lineTypeOfNodeToBeAsked.Equals(LineType.COMPARISON))
             {
-                if(!this.ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)nodeToBeAsked).GetLHS()))
+                if(!this.ast.GetWorkingMemory().ContainsKey(((ComparisonLine)nodeToBeAsked).GetLHS()))
                 {
-                    questionList.Add(((ComparisonLine<T>)nodeToBeAsked).GetLHS());    
+                    questionList.Add(((ComparisonLine)nodeToBeAsked).GetLHS());    
                 }
 
 
-                if (!TypeAlreadySet(nodeToBeAsked.GetFactValue()) && !this.ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)nodeToBeAsked).GetRHS().GetValue().ToString()))
+                if (!TypeAlreadySet(nodeToBeAsked.GetFactValue()) && !this.ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(((ComparisonLine)nodeToBeAsked).GetRHS().GetFactValueType(), ((ComparisonLine)nodeToBeAsked).GetRHS())))
                 {
-                    questionList.Add(nodeToBeAsked.GetFactValue().GetValue().ToString());
+                    questionList.Add(FactValue.GetValueInString(nodeToBeAsked.GetFactValue().GetFactValueType(), nodeToBeAsked.GetFactValue()));
                 }
             }
 
@@ -305,7 +309,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         }
 
 
-        public Dictionary<string, FactValueType> FindTypeOfElementToBeAsked(Node<T> node)
+        public Dictionary<string, FactValueType> FindTypeOfElementToBeAsked(Node node)
         {
             /*
              * FactValueType can be handled as of 16/06/2017 is as follows;
@@ -335,16 +339,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
              */
 
             string nodeVariableName = node.GetVariableName();
-            string nodeValueString = node.GetFactValue().GetValue().ToString();
+            string nodeValueString = FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue());
             bool typeAlreadySet = TypeAlreadySet(node.GetFactValue());
-            Dictionary<string, FactValue<T>> tempFactMap = this.nodeSet.GetFactMap();
-            Dictionary<string, FactValue<T>> tempInputMap = this.nodeSet.GetInputMap();
+            Dictionary<string, FactValue> tempFactMap = this.nodeSet.GetFactMap();
+            Dictionary<string, FactValue> tempInputMap = this.nodeSet.GetInputMap();
             LineType nodeLineType = node.GetLineType();
 
             //ComparisonLine type node and type of the node's value is clearly defined 
             if (LineType.COMPARISON.Equals(nodeLineType))
             {
-                FactValueType nodeRHSType = ((ComparisonLine<T>)node).GetRHS().GetFactValueType();
+                FactValueType nodeRHSType = ((ComparisonLine)node).GetRHS().GetFactValueType();
                 if (!nodeRHSType.Equals(FactValueType.STRING))
                 {
                     if (nodeRHSType.Equals(FactValueType.DEFI_STRING))
@@ -355,29 +359,29 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     {
                         fvt = nodeRHSType;
                     }
-                    factValueTypeMap.Add(((ComparisonLine<T>)node).GetLHS(), fvt);
+                    factValueTypeMap.Add(((ComparisonLine)node).GetLHS(), fvt);
 
                 }
                 else if (nodeRHSType.Equals(FactValueType.STRING))
                 {
-                    if (tempInputMap.ContainsKey(((ComparisonLine<T>)node).GetLHS()))
+                    if (tempInputMap.ContainsKey(((ComparisonLine)node).GetLHS()))
                     {
-                        fvt = tempInputMap[((ComparisonLine<T>)node).GetLHS()].GetFactValueType();
+                        fvt = tempInputMap[((ComparisonLine)node).GetLHS()].GetFactValueType();
                     }
-                    else if (tempInputMap.ContainsKey(((ComparisonLine<T>)node).GetRHS().GetValue().ToString()))
+                    else if (tempInputMap.ContainsKey(FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS())))
                     {
-                        fvt = tempInputMap[((ComparisonLine<T>)node).GetRHS().GetValue().ToString()].GetFactValueType();
+                        fvt = tempInputMap[FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS())].GetFactValueType();
                     }
-                    else if (tempFactMap.ContainsKey(((ComparisonLine<T>)node).GetLHS()))
+                    else if (tempFactMap.ContainsKey(((ComparisonLine)node).GetLHS()))
                     {
-                        fvt = tempFactMap[((ComparisonLine<T>)node).GetLHS()].GetFactValueType();
+                        fvt = tempFactMap[((ComparisonLine)node).GetLHS()].GetFactValueType();
                     }
-                    else if (tempFactMap.ContainsKey(((ComparisonLine<T>)node).GetRHS().GetValue().ToString()))
+                    else if (tempFactMap.ContainsKey(FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS())))
                     {
-                        fvt = tempFactMap[((ComparisonLine<T>)node).GetRHS().GetValue().ToString()].GetFactValueType();
+                        fvt = tempFactMap[FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS())].GetFactValueType();
                     }
-                    factValueTypeMap.Add(((ComparisonLine<T>)node).GetLHS(), fvt);
-                    factValueTypeMap.Add(((ComparisonLine<T>)node).GetRHS().GetValue().ToString(), fvt);
+                    factValueTypeMap.Add(((ComparisonLine)node).GetLHS(), fvt);
+                    factValueTypeMap.Add(FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS()), fvt);
                 }
 
             }
@@ -391,7 +395,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 }
                 else if (ast.GetWorkingMemory().ContainsKey(nodeValueString))
                 {
-                    FactValue<T> tempFv = ast.GetWorkingMemory()[nodeValueString];
+                    FactValue tempFv = ast.GetWorkingMemory()[nodeValueString];
                     if (tempFv.GetFactValueType().Equals(FactValueType.LIST))
                     {
                         fvt = FactValueType.LIST;
@@ -413,7 +417,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return factValueTypeMap;
         }
 
-        public bool TypeAlreadySet(FactValue<T> value)
+        public bool TypeAlreadySet(FactValue value)
         {
             bool hasAlreadySetType = false;
 
@@ -431,7 +435,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         {
             bool isIterateLineChild = false;
             List<int> tempList = new List<int>();
-            List< Node<T>> iterateLineList = nodeSet.GetNodeMap().Values.Where((node) => node.GetLineType().Equals(LineType.ITERATE)).ToList();
+            List< Node> iterateLineList = nodeSet.GetNodeMap().Values.Where((node) => node.GetLineType().Equals(LineType.ITERATE)).ToList();
 
             iterateLineList.ForEach((iNode) => {
                 List<int> iterateChildNodeList = this.nodeSet.GetDependencyMatrix().GetToChildDependencyList(iNode.GetNodeId());
@@ -481,7 +485,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * and rule type must be either COMPARISON, ITERATE or VALUE_CONCLUSION because they are the ones only can be the most child nodes, 
          * and other type of node must be a parent of other types of node.  
          */
-        public bool CanEvaluate(Node<T> node)
+        public bool CanEvaluate(Node node)
         {
 
             bool canEvaluate = false;
@@ -489,7 +493,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
             if (lineType.Equals(LineType.VALUE_CONCLUSION))
             {
-                if (((ValueConclusionLine<T>)node).GetIsPlainStatementFormat() && ast.GetWorkingMemory().ContainsKey(node.GetVariableName()))
+                if (((ValueConclusionLine)node).GetIsPlainStatementFormat() && ast.GetWorkingMemory().ContainsKey(node.GetVariableName()))
                 {
                     /*
                      * If the node is in plain statement format then varibaleName has same value as nodeName,
@@ -499,11 +503,11 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     canEvaluate = true;
                 }
                 else if (node.GetTokens().tokensList.Any((s) => s.Equals("IS IN LIST:"))
-                        && ast.GetWorkingMemory().ContainsKey(node.GetFactValue().GetValue().ToString())
+                         && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue()))
                         && ast.GetWorkingMemory().ContainsKey(node.GetVariableName()))
                 {
                     canEvaluate = true;
-                    FactValue<T> fv = node.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
+                    FactValue fv = node.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
 
                     /*
                      * the reason why ast.setFact() is used here rather than this.feedAndwerToNode() is that LineType is already known, and target node object is already found. 
@@ -514,9 +518,9 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
             else if (lineType.Equals(LineType.COMPARISON))
             {
-                FactValue<T> nodeRhsValue = ((ComparisonLine<T>)node).GetRHS();
+                FactValue nodeRhsValue = ((ComparisonLine)node).GetRHS();
                 if (!nodeRhsValue.GetFactValueType().Equals(FactValueType.STRING)
-                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)node).GetLHS()))
+                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine)node).GetLHS()))
                 {
                     canEvaluate = true;
                     if (!ast.GetWorkingMemory().ContainsKey(node.GetNodeName()))
@@ -525,8 +529,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     }
                 }
                 else if (nodeRhsValue.GetFactValueType().Equals(FactValueType.STRING)
-                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)node).GetLHS())
-                            && ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)node).GetRHS().GetValue().ToString()))
+                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine)node).GetLHS())
+                         && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(((ComparisonLine)node).GetRHS().GetFactValueType(), ((ComparisonLine)node).GetRHS())))
                 {
                     canEvaluate = true;
                     if (!ast.GetWorkingMemory().ContainsKey(node.GetNodeName()))
@@ -539,6 +543,93 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return canEvaluate;
         }
 
+        public FactListValue GenerateFactListValue(string[] valueArray)
+        {
+            FactListValue factListValue = null;
+            valueArray.ToList().ForEach(item =>
+            {
+                FactValueType? factValueType = FactValue.FindFactValueType(item);
+                switch(factValueType)
+                {
+                    case FactValueType.BOOLEAN:
+                        factListValue.AddFactValueToListValue(new FactBooleanValue(Boolean.Parse(item)));
+                        break;
+                    case FactValueType.DATE:
+                        string[] dateArray = Regex.Split(item, "/");
+                        DateTime factValueInDate = new DateTime(Int32.Parse(dateArray[2]), Int32.Parse(dateArray[1]), Int32.Parse(dateArray[0]));
+                        factListValue.AddFactValueToListValue(new FactDateValue(factValueInDate));
+                        break;
+                    case FactValueType.DEFI_STRING:
+                        factListValue.AddFactValueToListValue(new FactDefiStringValue(item));
+                        break;
+                    case FactValueType.DOUBLE:
+                        factListValue.AddFactValueToListValue(new FactDoubleValue(Double.Parse(item)));
+                        break;
+                    case FactValueType.HASH:
+                        factListValue.AddFactValueToListValue(new FactHashValue(item));
+                        break;
+                    case FactValueType.INTEGER:
+                        factListValue.AddFactValueToListValue(new FactIntegerValue(Int32.Parse(item)));
+                        break;
+                    case FactValueType.STRING:
+                        factListValue.AddFactValueToListValue(new FactStringValue(item));
+                        break;
+                }
+            });
+            return factListValue;
+        }
+
+
+        public FactValue GenerateFactValue(string value, FactValueType factValueType)
+        {
+            FactValue fv = null;
+
+            if (factValueType.Equals(FactValueType.BOOLEAN))
+            {
+                fv = FactValue.Parse(Boolean.Parse(value));
+            }
+            else if (factValueType.Equals(FactValueType.DATE))
+            {
+                /*
+                 * the string of nodeValue date format is dd/MM/YYYY
+                 */
+                string[] dateArray = Regex.Split(value, "/");
+                DateTime factValueInDate = new DateTime(Int32.Parse(dateArray[2]), Int32.Parse(dateArray[1]), Int32.Parse(dateArray[0]));
+
+
+                fv = FactValue.Parse(factValueInDate);
+            }
+            else if (factValueType.Equals(FactValueType.DOUBLE))
+            {
+                fv = FactValue.Parse(Double.Parse(value));
+            }
+            else if (factValueType.Equals(FactValueType.INTEGER))
+            {
+                fv = FactValue.Parse(Int32.Parse(value));
+            }
+            else if (factValueType.Equals(FactValueType.STRING))
+            {
+                fv = FactValue.Parse(value);
+            }
+            else if (factValueType.Equals(FactValueType.DEFI_STRING))
+            {
+                fv = FactValue.ParseDefiString(value);
+            }
+            else if (factValueType.Equals(FactValueType.HASH))
+            {
+                fv = FactValue.ParseHash(value);
+            }
+            else if (factValueType.Equals(FactValueType.URL))
+            {
+                fv = FactValue.ParseURL(value);
+            }
+            else if (factValueType.Equals(FactValueType.UUID))
+            {
+                fv = FactValue.ParseUUID(value);
+            }
+
+            return fv;
+        }
 
         /* 
          * this method is to add fact or set a node as a fact by using AssessmentState.setFact() method. it also is used to feed an answer to a being asked node.
@@ -546,57 +637,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * the reason for taking nodeName instead nodeVariableName is that it will be easier to find an exact node with nodeName
          * rather than nodeVariableName because a certain nodeVariableName could be found in several nodes
          */
-        public void FeedAnswerToNode(Node<T> targetNode, string questionName, T nodeValue, FactValueType nodeValueType, Assessment<T> ass)
+        public void FeedAnswerToNode(Node targetNode, string questionName, FactValue nodeValue, Assessment ass)
         {
-            FactValue<T> fv = null;
+            FactValue fv = nodeValue;
 
-            if (nodeValueType.Equals(FactValueType.BOOLEAN))
-            {
-                fv = FactValue<T>.Parse(Boolean.Parse(nodeValue.ToString()));
-            }
-            else if (nodeValueType.Equals(FactValueType.DATE))
-            {
-                /*
-                 * the string of nodeValue date format is dd/MM/YYYY
-                 */
-                string[] dateArray = Regex.Split(nodeValue.ToString(), "/");
-                DateTime factValueInDate = new DateTime(Int32.Parse(dateArray[2]), Int32.Parse(dateArray[1]), Int32.Parse(dateArray[0]));
-                
-
-                fv = FactValue<T>.Parse(factValueInDate);
-            }
-            else if (nodeValueType.Equals(FactValueType.DOUBLE))
-            {
-                fv = FactValue<T>.Parse(Double.Parse(nodeValue.ToString()));
-            }
-            else if (nodeValueType.Equals(FactValueType.INTEGER))
-            {
-                fv = FactValue<T>.Parse(Int32.Parse(nodeValue.ToString()));
-            }
-            else if (nodeValueType.Equals(FactValueType.LIST))
-            {
-                fv = FactValue<T>.ParseList(nodeValue);
-            }
-            else if (nodeValueType.Equals(FactValueType.STRING))
-            {
-                fv = FactValue<T>.Parse(nodeValue.ToString());
-            }
-            else if (nodeValueType.Equals(FactValueType.DEFI_STRING))
-            {
-                fv = FactValue<T>.ParseDefiString(nodeValue.ToString());
-            }
-            else if (nodeValueType.Equals(FactValueType.HASH))
-            {
-                fv = FactValue<T>.ParseHash(nodeValue.ToString());
-            }
-            else if (nodeValueType.Equals(FactValueType.URL))
-            {
-                fv = FactValue<T>.ParseURL(nodeValue.ToString());
-            }
-            else if (nodeValueType.Equals(FactValueType.UUID))
-            {
-                fv = FactValue<T>.ParseUUID(nodeValue.ToString());
-            }
 
             if (fv != null && !ass.GetNodeToBeAsked().GetLineType().Equals(LineType.ITERATE))
             {
@@ -604,21 +648,21 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 ast.AddItemToSummaryList(questionName);// add currentRule into SummeryList as the rule determined
 
 
-                if (targetNode.GetLineType().Equals(LineType.VALUE_CONCLUSION) && !((ValueConclusionLine<T>)targetNode).GetIsPlainStatementFormat())
+                if (targetNode.GetLineType().Equals(LineType.VALUE_CONCLUSION) && !((ValueConclusionLine)targetNode).GetIsPlainStatementFormat())
                 {
-                    FactValue<T> selfEvalFactValue = targetNode.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
+                    FactValue selfEvalFactValue = targetNode.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
                     ast.SetFact(targetNode.GetNodeName(), selfEvalFactValue); // add the value of targetNode itself into the workingMemory  
                     ast.AddItemToSummaryList(targetNode.GetNodeName());// add currentRule into SummeryList as the rule determined
                 }
                 else if (targetNode.GetLineType().Equals(LineType.COMPARISON))
                 {
-                    FactValue<T> rhsValue = ((ComparisonLine<T>)targetNode).GetRHS();
+                    FactValue rhsValue = ((ComparisonLine)targetNode).GetRHS();
                     if((rhsValue.GetFactValueType().Equals(FactValueType.STRING)
-                            && ast.GetWorkingMemory().ContainsKey(rhsValue.GetValue().ToString()))
+                        && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(rhsValue.GetFactValueType(), rhsValue)))
                                 || !rhsValue.GetFactValueType().Equals(FactValueType.STRING)
                       )
                     {
-                        FactValue<T> selfEvalFactValue = targetNode.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
+                        FactValue selfEvalFactValue = targetNode.SelfEvaluate(ast.GetWorkingMemory(), this.scriptEngine);
                         ast.SetFact(targetNode.GetNodeName(), selfEvalFactValue); // add the value of targetNode itself into the workingMemory  
                         ast.AddItemToSummaryList(targetNode.GetNodeName());// add currentRule into SummeryList as the rule determined
                     }
@@ -634,8 +678,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
             else if (ass.GetNodeToBeAsked().GetLineType().Equals(LineType.ITERATE))
             {
-                ((IterateLine<T>)ass.GetNodeToBeAsked()).IterateFeedAnswers(targetNode, questionName, nodeValue, nodeValueType, this.nodeSet, ast, ass);
-                if (((IterateLine<T>)ass.GetNodeToBeAsked()).CanBeSelfEvaluated(ast.GetWorkingMemory()))
+                ((IterateLine)ass.GetNodeToBeAsked()).IterateFeedAnswers(targetNode, questionName, nodeValue, this.nodeSet, ast, ass);
+                if (((IterateLine)ass.GetNodeToBeAsked()).CanBeSelfEvaluated(ast.GetWorkingMemory()))
                 {
                     BackPropagating(nodeSet.FindNodeIndex(ass.GetNodeToBeAsked().GetNodeName()));
                 }
@@ -645,11 +689,11 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         public void BackPropagating(int nodeIndex)
         {
-            List<Node<T>> nodeSortedList = nodeSet.GetNodeSortedList();
+            List<Node> nodeSortedList = nodeSet.GetNodeSortedList();
             int sortedListSize = nodeSortedList.Count;
             Enumerable.Range(0, sortedListSize).ToList().ForEach((i) =>
             {
-                Node<T> tempNode = nodeSortedList[sortedListSize - (i + 1)];
+                Node tempNode = nodeSortedList[sortedListSize - (i + 1)];
                 LineType lineType = tempNode.GetLineType();
 
                 int tempNodeId = tempNode.GetNodeId();
@@ -657,88 +701,87 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 if (parentDependencyList.Count != 0)
                 {
                     parentDependencyList.ForEach((parentId) =>
+                        {
+                            if ((nodeSet.GetDependencyMatrix().GetDependencyType(parentId, tempNodeId) & DependencyType.GetMandatory()) == DependencyType.GetMandatory()
+                                && !ast.IsInclusiveList(tempNode.GetNodeName())
+                               && !IsIterateLineChild(tempNode.GetNodeId()))
+                            {
+                                ast.AddItemToMandatoryList(tempNode.GetNodeName());
+                            }
+                        }
+                    );
+                }
+                if (nodeIndex < (sortedListSize - (i + 1))) //case of all nodes located after the nodeIndex
+                {
+                    if (HasChildren(tempNode.GetNodeId()))
                     {
-                        if ((nodeSet.GetDependencyMatrix().GetDependencyType(parentId, tempNodeId) & DependencyType.GetMandatory()) == DependencyType.GetMandatory()
-                            && !ast.IsInclusiveList(tempNode.GetNodeName())
-                           && !IsIterateLineChild(tempNode.GetNodeId()))
+                        if(!ast.GetWorkingMemory().ContainsKey(tempNode.GetNodeName())
+                                && CanDetermine(tempNode, lineType))
                         {
-                            ast.AddItemToMandatoryList(tempNode.GetNodeName());
-                        }
-
-                        if (nodeIndex < (sortedListSize - (i + 1))) //case of all nodes located after the nodeIndex
-                        {
-                            if (HasChildren(tempNode.GetNodeId()))
+                            if(!lineType.Equals(LineType.EXPR_CONCLUSION))
                             {
-                                if(!ast.GetWorkingMemory().ContainsKey(tempNode.GetNodeName())
-                                    && CanDetermine(tempNode, lineType))
-                                {
-                                    if(!lineType.Equals(LineType.EXPR_CONCLUSION))
-                                    {
-                                        ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                /*
-                                 * ValueConclusionLine in 'A-statement' format does not need to be considered here due to the reason that
-                                 * the case should be in the workingMemory if it is already asked.
-                                 */
-                                if (lineType.Equals(LineType.VALUE_CONCLUSION)
-                                    && !((ValueConclusionLine<T>)tempNode).GetIsPlainStatementFormat()
-                                    && ast.GetWorkingMemory().ContainsKey(((ValueConclusionLine<T>)tempNode).GetVariableName()))
-                                {
-                                    FactValue<T> fv = tempNode.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine);
-
-                                    ast.SetFact(tempNode.GetNodeName(), fv);
-                                    ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
-                                }
-                                else if (lineType.Equals(LineType.COMPARISON)
-                                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)tempNode).GetLHS())
-                                        && ast.GetWorkingMemory().ContainsKey(((ComparisonLine<T>)tempNode).GetRHS().GetValue().ToString()))
-                                {
-                                    FactValue<T> fv = tempNode.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine);
-
-                                    ast.SetFact(tempNode.GetNodeName(), fv);
-                                    ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
-                                }
-
-                            }
-
-                        }
-                        else // case of all nodes located before the nodeIndex
-                        {
-                            /*
-                             * it the tempNode is located before the nodeIndex then there is need to check whether or not the tempNode is in the inclusiveList due to the reason that
-                             * evaluating only relevant node could speed the propagation faster. In addition only relevant nodes can be traced by checking the inclusiveList.
-                             */
-
-                            if (ast.GetInclusiveList().Contains(tempNode.GetNodeName()))
-                            {
-                                /*
-                                 * once a user feeds an answer to the engine, the engine will propagate the entire NodeSet or Assessment base on the answer
-                                 * during the back-propagation, the engine checks if current node;
-                                 * 1. has been determined;
-                                 * 2. has any child nodes;
-                                 * 3. can be determined with given facts in the workingMemory.
-                                 * 
-                                 * once the current checking node meets the condition then add it to the summaryList for summary view.
-                                 */
-                                if (!ast.GetWorkingMemory().ContainsKey(tempNode.GetNodeName())
-                                        && HasChildren(tempNode.GetNodeId())
-                                        && CanDetermine(tempNode, lineType)
-                                   )
-                                {
-                                    if (!lineType.Equals(LineType.EXPR_CONCLUSION))
-                                    {
-                                        ast.AddItemToSummaryList(tempNode.GetNodeName()); // add currentRule into SummeryList as the rule determined
-                                    }
-
-                                }
+                                ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
                             }
                         }
+                    }
+                    else
+                    {
+                        /*
+                         * ValueConclusionLine in 'A-statement' format does not need to be considered here due to the reason that
+                         * the case should be in the workingMemory if it is already asked.
+                         */
+                        if (lineType.Equals(LineType.VALUE_CONCLUSION)
+                            && !((ValueConclusionLine)tempNode).GetIsPlainStatementFormat()
+                            && ast.GetWorkingMemory().ContainsKey(((ValueConclusionLine)tempNode).GetVariableName()))
+                        {
+                            FactValue fv = tempNode.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine);
 
-                    });
+                            ast.SetFact(tempNode.GetNodeName(), fv);
+                            ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
+                        }
+                        else if (lineType.Equals(LineType.COMPARISON)
+                                && ast.GetWorkingMemory().ContainsKey(((ComparisonLine)tempNode).GetLHS())
+                                 && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(((ComparisonLine)tempNode).GetRHS().GetFactValueType(), ((ComparisonLine)tempNode).GetRHS())))
+                        {
+                            FactValue fv = tempNode.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine);
+
+                            ast.SetFact(tempNode.GetNodeName(), fv);
+                            ast.AddItemToSummaryList(tempNode.GetNodeName());// add currentRule into SummeryList as the rule determined
+                        }
+
+                    }
+
+                }
+                else // case of all nodes located before the nodeIndex
+                {
+                    /*
+                     * it the tempNode is located before the nodeIndex then there is need to check whether or not the tempNode is in the inclusiveList due to the reason that
+                     * evaluating only relevant node could speed the propagation faster. In addition only relevant nodes can be traced by checking the inclusiveList.
+                     */
+
+                    if (ast.GetInclusiveList().Contains(tempNode.GetNodeName()))
+                    {
+                        /*
+                         * once a user feeds an answer to the engine, the engine will propagate the entire NodeSet or Assessment base on the answer
+                         * during the back-propagation, the engine checks if current node;
+                         * 1. has been determined;
+                         * 2. has any child nodes;
+                         * 3. can be determined with given facts in the workingMemory.
+                         * 
+                         * once the current checking node meets the condition then add it to the summaryList for summary view.
+                         */
+                        if (!ast.GetWorkingMemory().ContainsKey(tempNode.GetNodeName())
+                                && HasChildren(tempNode.GetNodeId())
+                                && CanDetermine(tempNode, lineType)
+                           )
+                        {
+                            if (!lineType.Equals(LineType.EXPR_CONCLUSION))
+                            {
+                                ast.AddItemToSummaryList(tempNode.GetNodeName()); // add currentRule into SummeryList as the rule determined
+                            }
+
+                        }
+                    }
                 }
             });
         }
@@ -747,13 +790,13 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         /*
          *this method is to find all parent rules of a given rule, and add them into the ' inclusiveList' for future reference
          */
-        public void AddParentIntoInclusiveList(Node<T> node)
+        public void AddParentIntoInclusiveList(Node node)
         {
             List<int> nodeInDependencyList = nodeSet.GetDependencyMatrix().GetFromParentDependencyList(node.GetNodeId());
             if (nodeInDependencyList.Count != 0) // if rule has parents
             {
                 nodeInDependencyList.ForEach((i)=> {
-                    Node<T> parentNode = nodeSet.GetNodeMap()[nodeSet.GetNodeIdMap()[i]];
+                    Node parentNode = nodeSet.GetNodeMap()[nodeSet.GetNodeIdMap()[i]];
                     if (!ast.GetInclusiveList().Contains(parentNode.GetNodeName()))
                     {
                         ast.GetInclusiveList().Add(parentNode.GetNodeName());
@@ -781,7 +824,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return hasAllMandatoryChildAnswered;
         }
                                                               
-        public bool CanDetermine(Node<T> node, LineType lineType)
+        public bool CanDetermine(Node node, LineType lineType)
         {
             bool canDetermine = false;
             /*
@@ -839,15 +882,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             {
                 if (node.GetNodeName().Contains("IS IN LIST")
                         && ast.GetWorkingMemory().ContainsKey(node.GetVariableName())
-                            && ast.GetWorkingMemory().ContainsKey(node.GetFactValue().GetValue().ToString()))
+                    && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue())))
                 {
                     ast.SetFact(node.GetNodeName(), node.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine));
                     canDetermine = true;
                 }
                 else
                 {
-                    bool isPlainStatementFormat = ((ValueConclusionLine<T>)node).GetIsPlainStatementFormat();
-                    string nodeFactValueInString = node.GetFactValue().GetValue().ToString();
+                    bool isPlainStatementFormat = ((ValueConclusionLine)node).GetIsPlainStatementFormat();
+                    string nodeFactValueInString = FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue());
                     /*
                      * isAnyOrDependencyTrue() method contains trimming off method to cut off any 'UNDETERMINED' state 'OR' child nodes. 
                      */
@@ -1001,7 +1044,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
             else if (LineType.ITERATE.Equals(lineType))
             {
-                if (((IterateLine<T>)node).CanBeSelfEvaluated(ast.GetWorkingMemory()))
+                if (((IterateLine)node).CanBeSelfEvaluated(ast.GetWorkingMemory()))
                 {
                     ast.SetFact(node.GetNodeName(), node.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine));
                     ast.AddItemToSummaryList(node.GetVariableName());
@@ -1032,9 +1075,9 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return hasAllAndChildEvaluated;
         }
 
-        private void HandleValuConclusionLineTrueCase(Node<T> node, bool isPlainStatementFormat, string nodeFactValueInString)
+        private void HandleValuConclusionLineTrueCase(Node node, bool isPlainStatementFormat, string nodeFactValueInString)
         {
-            ast.SetFact(node.GetNodeName(), FactValue<T>.Parse(true));
+            ast.SetFact(node.GetNodeName(), FactValue.Parse(true));
 
             if (!isPlainStatementFormat)
             {
@@ -1049,19 +1092,19 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 ast.AddItemToSummaryList(node.GetVariableName());
             }
         }
-        private void HandleValueConclusionLineFalseCase(Node<T> node, bool isPlainStatementFormat, string nodeFactValueInString)
+        private void HandleValueConclusionLineFalseCase(Node node, bool isPlainStatementFormat, string nodeFactValueInString)
         {
-            ast.SetFact(node.GetNodeName(), FactValue<T>.Parse(false));
+            ast.SetFact(node.GetNodeName(), FactValue.Parse(false));
 
             if (!isPlainStatementFormat)
             {
                 if (ast.GetWorkingMemory().ContainsKey(nodeFactValueInString))
                 {
-                    ast.SetFact(node.GetVariableName(), FactValue<T>.Parse("NOT " + ast.GetWorkingMemory()[nodeFactValueInString]));
+                    ast.SetFact(node.GetVariableName(), FactValue.Parse("NOT " + ast.GetWorkingMemory()[nodeFactValueInString]));
                 }
                 else
                 {
-                    ast.SetFact(node.GetVariableName(), FactValue<T>.Parse("NOT " + nodeFactValueInString));
+                    ast.SetFact(node.GetVariableName(), FactValue.Parse("NOT " + nodeFactValueInString));
                 }
                 ast.AddItemToSummaryList(node.GetVariableName());
             }
@@ -1071,17 +1114,17 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         {
             return nodeSet.GetDefaultGoalNode().GetNodeName();
         }
-        public string GetAssessmentGoalRuleQuestion(Assessment<T> ass)
+        public string GetAssessmentGoalRuleQuestion(Assessment ass)
         {
             return ass.GetGoalNode().GetNodeName();
         }
 
-        public FactValue<T> GetDefaultGoalRuleAnswer()
+        public FactValue GetDefaultGoalRuleAnswer()
         {
             return ast.GetWorkingMemory()[nodeSet.GetDefaultGoalNode().GetVariableName()];
         }
 
-        public FactValue<T> GetAssessmentGoalRuleAnswer(Assessment<T> ass)
+        public FactValue GetAssessmentGoalRuleAnswer(Assessment ass)
         {
             return ast.GetWorkingMemory()[ass.GetGoalNode().GetVariableName()];
         }
@@ -1098,7 +1141,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             {
                 hasChildren = true;
                 nodeSet.GetDependencyMatrix().GetToChildDependencyList(nodeId).ForEach((item) =>{
-                    Node<T> nodeName = nodeSet.GetNodeByNodeId(item);
+                    Node nodeName = nodeSet.GetNodeByNodeId(item);
                     AddChildRuleIntoInclusiveList(nodeName);
                 });
             }
@@ -1108,7 +1151,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         /*
         the method adds all children rules of relevant parent rule into the 'inlcusiveList' if they are not in the list.
         */
-        public void AddChildRuleIntoInclusiveList(Node<T> node)
+        public void AddChildRuleIntoInclusiveList(Node node)
         {
 
             List<int> childrenListOfNode = nodeSet.GetDependencyMatrix().GetToChildDependencyList(node.GetNodeId());
@@ -1123,7 +1166,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         }
 
 
-        public bool IsAnyOrDependencyTrue(Node<T> node, List<int> orChildDependencies)
+        public bool IsAnyOrDependencyTrue(Node node, List<int> orChildDependencies)
         {
             bool isAnyOrDependencyTrue = false;
             targetNode = node;
@@ -1132,36 +1175,44 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                 List<int> trueOrChildList = new List<int>();
                 orChildDependencies.ForEach((item)=> {
-                    if (ast.IsInclusiveList(nodeSet.GetNodeIdMap()[item])
-                        && ast.GetWorkingMemory().ContainsKey(nodeSet.GetNodeIdMap()[item]))
+
+                    string nodeNameOfItem = null;
+                    nodeSet.GetNodeIdMap().TryGetValue(item, out nodeNameOfItem);
+
+                    FactValue itemValueInWorkingMemory = null;
+                    ast.GetWorkingMemory().TryGetValue(nodeNameOfItem, out itemValueInWorkingMemory);
+
+
+                    if (ast.IsInclusiveList(nodeNameOfItem)
+                        && ast.GetWorkingMemory().ContainsKey(nodeNameOfItem))
                     {
                         if ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
-                          && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot())
-                      )
+                          && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                         {
                             trueOrChildList.Add(item);
-                            if (!ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeSet.GetNodeIdMap()[item]))
+                            if (!ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeNameOfItem))
                             {
-                                ast.SetFact("KNOWN " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(true));
-                                ast.AddItemToSummaryList("KNOWN " + nodeSet.GetNodeIdMap()[item]);
+                                ast.SetFact("KNOWN " + nodeNameOfItem, FactValue.Parse(true));
+                                ast.AddItemToSummaryList("KNOWN " + nodeNameOfItem);
                             }
 
                         }
-                        else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(true)
+                        //else if (Boolean.Parse(FactValue.GetValueInString(FactValueType.BOOLEAN, itemValueInWorkingMemory)).Equals(true)
+                        else if(((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
                                 && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                         {
 
                             trueOrChildList.Add(item);
                         }
-                        else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(false)
+                        else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
                                 && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()))
                         {
                             trueOrChildList.Add(item);
 
                             if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeSet.GetNodeIdMap()[item]))
                             {
-                                ast.SetFact("NOT " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(true));
-                                ast.AddItemToSummaryList("NOT " + nodeSet.GetNodeIdMap()[item]);
+                                ast.SetFact("NOT " + nodeNameOfItem, FactValue.Parse(true));
+                                ast.AddItemToSummaryList("NOT " + nodeNameOfItem);
                             }
 
                         }
@@ -1185,7 +1236,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return isAnyOrDependencyTrue;
         }
 
-        public void TrimDependency(Node<T> parentNode, int childNodeId)
+        public void TrimDependency(Node parentNode, int childNodeId)
         {
             int parentNodeId = parentNode.GetNodeId();
             int dpType = nodeSet.GetDependencyMatrix().GetDependencyMatrixArray()[parentNodeId, childNodeId];
@@ -1215,7 +1266,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         }
 
-        public bool IsAnyAndDependencyFalse(Node<T> node, List<int> andChildDependencies)
+        public bool IsAnyAndDependencyFalse(Node node, List<int> andChildDependencies)
         {
             bool isAnyAndDependencyFalse = false;
             targetNode = node;
@@ -1225,33 +1276,40 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 List<int> falseAndList = new List<int>();
 
                 andChildDependencies.ForEach((item) => {
-                    if (ast.GetWorkingMemory().ContainsKey(nodeSet.GetNodeIdMap()[item]))
+                    
+                    string nodeNameOfItem = null;
+                    nodeSet.GetNodeIdMap().TryGetValue(item, out nodeNameOfItem);
+
+                    FactValue itemValueInWorkingMemory = null;
+                    ast.GetWorkingMemory().TryGetValue(nodeNameOfItem, out itemValueInWorkingMemory);
+
+                    if (ast.GetWorkingMemory().ContainsKey(nodeNameOfItem))
                     {
-                        if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(false)
+                        if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
                                 && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot())
-                                && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
+                             && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
                         {
                             falseAndList.Add(item);
                         }
-                        else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(true)
+                        else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
                                     && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
                                     && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown())
                         )
                         {
-                            if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeSet.GetNodeIdMap()[item]))
+                            if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))
                             {
-                                ast.SetFact("NOT " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                                ast.AddItemToSummaryList("NOT " + nodeSet.GetNodeIdMap()[item]);
+                                ast.SetFact("NOT " + nodeNameOfItem, FactValue.Parse(false));
+                                ast.AddItemToSummaryList("NOT " + nodeNameOfItem);
                             }
 
                             falseAndList.Add(item);
                         }
                         else if ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & (DependencyType.GetNot() | DependencyType.GetKnown())) == (DependencyType.GetNot() | DependencyType.GetKnown()))
                         {
-                            if (!ast.GetWorkingMemory().ContainsKey("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]))
+                            if (!ast.GetWorkingMemory().ContainsKey("NOT KNOWN " + nodeNameOfItem))
                             {
-                                ast.SetFact("NOT KNOWN " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                                ast.AddItemToSummaryList("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]);
+                                ast.SetFact("NOT KNOWN " + nodeNameOfItem, FactValue.Parse(false));
+                                ast.AddItemToSummaryList("NOT KNOWN " + nodeNameOfItem);
                             }
 
                             falseAndList.Add(item);
@@ -1281,40 +1339,47 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         }
 
 
-        public bool IsAllAndDependencyTrue(Node<T> node, List<int> andChildDependencies)
+        public bool IsAllAndDependencyTrue(Node node, List<int> andChildDependencies)
         {
             bool isAllAndTrue = false;
             targetNode = node;
 
             List<int> determinedTrueAndChildDependencies = new List<int>();
             andChildDependencies.ForEach((item) => {
-                if (ast.IsInclusiveList(nodeSet.GetNodeIdMap()[item])
-                && ast.GetWorkingMemory().ContainsKey(nodeSet.GetNodeIdMap()[item]))
+
+                string nodeNameOfItem = null;
+                nodeSet.GetNodeIdMap().TryGetValue(item, out nodeNameOfItem);
+
+                FactValue itemValueInWorkingMemory = null;
+                ast.GetWorkingMemory().TryGetValue(nodeNameOfItem, out itemValueInWorkingMemory);
+
+                if (ast.IsInclusiveList(nodeNameOfItem)
+                    && ast.GetWorkingMemory().ContainsKey(nodeNameOfItem))
                 {
-                    if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(true)
-                    && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
+                    if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
+                         && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                     {
                         determinedTrueAndChildDependencies.Add(item);
                     }
                     else if ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
                           && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                     {
-                        if (!ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeSet.GetNodeIdMap()[item]))
+                        if (!ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeNameOfItem))
                         {
-                            ast.SetFact("KNOWN " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                            ast.AddItemToSummaryList("KNOWN " + nodeSet.GetNodeIdMap()[item]);
+                            ast.SetFact("KNOWN " + nodeNameOfItem, FactValue.Parse(false));
+                            ast.AddItemToSummaryList("KNOWN " + nodeNameOfItem);
                         }
 
                         determinedTrueAndChildDependencies.Add(item);
                     }
-                    else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(false)
+                    else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
                           && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
                           && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
                     {
-                        if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeSet.GetNodeIdMap()[item]))
+                        if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))
                         {
-                            ast.SetFact("NOT " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                            ast.AddItemToSummaryList("NOT " + nodeSet.GetNodeIdMap()[item]);
+                            ast.SetFact("NOT " + nodeNameOfItem, FactValue.Parse(false));
+                            ast.AddItemToSummaryList("NOT " + nodeNameOfItem);
                         }
 
                         determinedTrueAndChildDependencies.Add(item);
@@ -1331,53 +1396,58 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return isAllAndTrue;
         }
 
-        public bool IsAllRelevantChildDependencyDetermined(Node<T> node, List<int> allChildDependencies)
+        public bool IsAllRelevantChildDependencyDetermined(Node node, List<int> allChildDependencies)
         {
             bool isAllRelevantChildDependencyDetermined = false;
             targetNode = node;
 
             List<int> determinedAndOutDependencies = new List<int>();
             allChildDependencies.ForEach((item) =>
-            {
-                if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]] != null
-                    && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & (DependencyType.GetNot() | DependencyType.GetKnown())) == (DependencyType.GetNot() | DependencyType.GetKnown())
-                    && !ast.GetWorkingMemory().ContainsKey("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]))
                 {
-                    ast.SetFact("NOT KNOWN " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                    ast.AddItemToSummaryList("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]);
-                }
-                else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]] != null
-                         && ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(false)
-                         && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
-                         && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeSet.GetNodeIdMap()[item]))
-                {
-                    ast.SetFact("NOT " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(true));
-                    ast.AddItemToSummaryList("NOT " + nodeSet.GetNodeIdMap()[item]);
-                }
-                else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]] != null
-                         && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
-                         && !ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeSet.GetNodeIdMap()[item]))
-                {
-                    ast.SetFact("KNOWN " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(true));
-                    ast.AddItemToSummaryList("KNOWN " + nodeSet.GetNodeIdMap()[item]);
-                }
-                else if (ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]] != null
-                         && ast.GetWorkingMemory()[nodeSet.GetNodeIdMap()[item]].GetValue().Equals(true)
-                         && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
-                            && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeSet.GetNodeIdMap()[item]))
-                {
-                    ast.SetFact("NOT " + nodeSet.GetNodeIdMap()[item], FactBooleanValue<T>.Parse(false));
-                    ast.AddItemToSummaryList("NOT " + nodeSet.GetNodeIdMap()[item]);
-                }
+                    FactValue itemValueInWorkingMemory = null;
+                    string nodeNameOfItem = null;
+                    nodeSet.GetNodeIdMap().TryGetValue(item, out nodeNameOfItem);
+                    ast.GetWorkingMemory().TryGetValue(nodeNameOfItem, out itemValueInWorkingMemory);
+
+                    if (itemValueInWorkingMemory != null
+                        && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & (DependencyType.GetNot() | DependencyType.GetKnown())) == (DependencyType.GetNot() | DependencyType.GetKnown())
+                        && !ast.GetWorkingMemory().ContainsKey("NOT KNOWN " + nodeNameOfItem))
+                    {
+                        ast.SetFact("NOT KNOWN " + nodeNameOfItem, FactValue.Parse(false));
+                        ast.AddItemToSummaryList("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]);
+                    }
+                    else if (itemValueInWorkingMemory != null
+                             && (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
+                             && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
+                                 && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem)))
+                    {
+                        ast.SetFact("NOT " + nodeNameOfItem, FactValue.Parse(true));
+                        ast.AddItemToSummaryList("NOT " + nodeNameOfItem);
+                    }
+                    else if (itemValueInWorkingMemory != null
+                             && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
+                             && !ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeNameOfItem))
+                    {
+                        ast.SetFact("KNOWN " + nodeSet.GetNodeIdMap()[item], FactValue.Parse(true));
+                        ast.AddItemToSummaryList("KNOWN " + nodeNameOfItem);
+                    }
+                    else if (itemValueInWorkingMemory != null
+                             && ((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
+                             && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
+                             && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))
+                    {
+                        ast.SetFact("NOT " + nodeNameOfItem, FactValue.Parse(false));
+                        ast.AddItemToSummaryList("NOT " + nodeNameOfItem);
+                    }
 
 
-                if (ast.IsInclusiveList(nodeSet.GetNodeIdMap()[item])
-                && ast.GetWorkingMemory().ContainsKey(nodeSet.GetNodeIdMap()[item]))
-                {
-                    determinedAndOutDependencies.Add(item);
+                    if (ast.IsInclusiveList(nodeNameOfItem)
+                    && ast.GetWorkingMemory().ContainsKey(nodeSet.GetNodeIdMap()[item]))
+                    {
+                        determinedAndOutDependencies.Add(item);
+                    }
                 }
-            }
-                                                               );
+            );
 
 
             if (allChildDependencies != null && determinedAndOutDependencies.Count == allChildDependencies.Count)
@@ -1502,7 +1572,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             this.GetAssessmentState().GetSummaryList().ForEach((item) =>{
                 JObject objectNode = new JObject();
                 objectNode.Add("nodeText", item);
-                objectNode.Add("nodeValue", this.GetAssessmentState().GetWorkingMemory()[item].GetValue().ToString());
+                objectNode.Add("nodeValue", FactValue.GetValueInString(this.GetAssessmentState().GetWorkingMemory()[item].GetFactValueType(), this.GetAssessmentState().GetWorkingMemory()[item]));
                 tempSummaryList.Add(objectNode);
             });
 
@@ -1514,7 +1584,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
             List<string> tempSummaryList = this.GetAssessmentState().GetSummaryList();
             int indexOfQuestionToBeEdited = tempSummaryList.IndexOf(question);
-            Dictionary<string, FactValue<T>> tempWorkingMemory = this.GetAssessmentState().GetWorkingMemory();
+            Dictionary<string, FactValue> tempWorkingMemory = this.GetAssessmentState().GetWorkingMemory();
                     
             /*
              * following two lines are to reset 'exclusiveList' and 'inclusiveList' which are for tracking all relevant branches by cutting dependencies
@@ -1533,7 +1603,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
              */
             Enumerable.Range(0, tempSummaryList.Count).ToList().ForEach((index) =>{
                 if(index < indexOfQuestionToBeEdited) {
-                    Node<T> node = this.GetNextQuestion(this.GetAssessment());
+                    Node node = this.GetNextQuestion(this.GetAssessment());
                     if(ass.GetNodeToBeAsked().GetLineType().Equals(LineType.ITERATE))
                     {
                         ass.SetAuxNodeToBeAsked(node);
@@ -1542,8 +1612,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     questionnaireFromNode.ForEach((questionItem) =>{
                         if(tempSummaryList.Contains(questionItem))
                         {
-                            FactValue<T> fv = tempWorkingMemory[questionItem];
-                            this.FeedAnswerToNode(node, questionItem, fv.GetValue(), fv.GetFactValueType(), ass);
+                            FactValue fv = tempWorkingMemory[questionItem];
+                            this.FeedAnswerToNode(node, questionItem, fv, ass);
                         }
                     });
                 }
@@ -1560,7 +1630,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             int initialSize = nodeSet.GetNodeSortedList().Count;
             List<string> conditionList = new List<string>(initialSize);
             List<string> questionList = new List<string>(initialSize);
-            foreach (Node<T> node in nodeSet.GetNodeSortedList())
+            foreach (Node node in nodeSet.GetNodeSortedList())
             {
                 if (nodeSet.GetDependencyMatrix().GetToChildDependencyList(node.GetNodeId()).Count == 0)
                 {

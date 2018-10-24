@@ -7,9 +7,9 @@ using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class ExprConclusionLine<T> : Node<T>
+    public class ExprConclusionLine : Node
     {
-        private FactValue<T> equation;
+        private FactValue equation;
         private string dateFormatter = @"dd/MM/yyyy";
 
 
@@ -29,11 +29,11 @@ namespace Nadia.C.Sharp.NodeFolder
         }
 
 
-        public FactValue<T> GetEquation()
+        public FactValue GetEquation()
         {
             return this.equation;
         }
-        public void SetEquation(FactValue<T> newEquation)
+        public void SetEquation(FactValue newEquation)
         {
             this.equation = newEquation;
         }
@@ -46,13 +46,13 @@ namespace Nadia.C.Sharp.NodeFolder
         }
 
 
-        public override FactValue<T> SelfEvaluate(Dictionary<string, FactValue<T>> workingMemory, Jint.Engine jint)
+        public override FactValue SelfEvaluate(Dictionary<string, FactValue> workingMemory, Jint.Engine jint)
         {
             /*
              * calculation can only handle int, double(long) and difference in years between two dates at the moment.
              * if difference in days or months is required then new 'keyword' must be introduced such as 'Diff Years', 'Diff Days', or 'Diff Months'
              */
-            string equationInString = this.equation.GetValue().ToString();
+            string equationInString = FactValue.GetValueInString(this.equation.GetFactValueType(), this.equation);
             string pattern = @"[-+/*()?:;,.""](\s*)";
             string datePattern = @"([0-2]?[0-9]|3[0-1])/(0?[0-9]|1[0-2])/([0-9][0-9])?[0-9][0-9]|([0-9][0-9])?[0-9][0-9]/(0?[0-9]|1[0-2])/([0-2]?[0-9]|3[0-1])";
 
@@ -80,19 +80,19 @@ namespace Nadia.C.Sharp.NodeFolder
                     tempItem = tempArray[i];
                     if (!string.IsNullOrEmpty(tempItem.Trim()) && workingMemory[tempItem.Trim()] != null)
                     {
-                        FactValue<T> tempFv = workingMemory[tempItem.Trim()];
-                        if (tempFv.GetValue().GetType().FullName.Equals(DateTime.Now.GetType().FullName))
+                        FactValue tempFv = workingMemory[tempItem.Trim()];
+                        if (tempFv.GetFactValueType().Equals(FactValueType.DATE))
                         {
                             /*
                              * below line is temporary solution.
                              * Within next iteration it needs to be that this node should take dateFormatter for its constructor to determine which date format it needs
                              */
-                            string tempStr = DateTime.ParseExact(tempFv.GetValue().ToString(), dateFormatter, CultureInfo.InvariantCulture).ToString();
+                            string tempStr = DateTime.ParseExact(FactValue.GetValueInString(tempFv.GetFactValueType(),tempFv), dateFormatter, CultureInfo.InvariantCulture).ToString();
                             tempScript = tempScript.Replace(tempScript.Trim(), tempStr);
                         }
                         else
                         {
-                            tempScript = tempScript.Replace(tempItem.Trim(), workingMemory[tempItem.Trim()].GetValue().ToString().Trim());
+                            tempScript = tempScript.Replace(tempItem.Trim(), FactValue.GetValueInString(workingMemory[tempItem.Trim()].GetFactValueType(), workingMemory[tempItem.Trim()]).Trim());
                         }
                     
                     }
@@ -124,22 +124,22 @@ namespace Nadia.C.Sharp.NodeFolder
                 result = jint.Execute(tempScript).GetCompletionValue().ToString();
             }
            
-            FactValue<T> returnValue = null;
+            FactValue returnValue = null;
 
             switch(Tokenizer.GetTokens(result).tokensString)
             {
                 case "No":
                     int intResult = 0;
                     Int32.TryParse(result, out intResult);
-                    returnValue = FactValue<T>.Parse(intResult);
+                    returnValue = FactValue.Parse(intResult);
                     break;
                 case "De":
-                    returnValue = FactValue<T>.Parse(Convert.ToDouble(result));
+                    returnValue = FactValue.Parse(Convert.ToDouble(result));
                     break;
                 //there is no function for outcome to be a date at the moment  E.g.The determination IS CALC(enrollment date + 5 days)
                 //case "Da":
                 default:
-                    returnValue = FactValue<T>.Parse(result);
+                    returnValue = FactValue.Parse(result);
                     break;
                     
             }

@@ -1,29 +1,29 @@
 ﻿using System;
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class Dependency<T>
+    public class Dependency
     {
         private int dependencyType; //this variable is to store 'AND/OR' DependencyType between Nodes
-        private Node<T> parent; // this variable is to store a parent Node of this dependency
-        private Node<T> child; // this variable is to store a child Node of this dependency
+        private Node parent; // this variable is to store a parent Node of this dependency
+        private Node child; // this variable is to store a child Node of this dependency
 
         //    public Dependency(Node child, String DependencyType)
-        public Dependency(Node<T> parent, Node<T> child, int dependencyType)
+        public Dependency(Node parent, Node child, int dependencyType)
         {
             this.parent = parent;
             this.child = child;
             this.dependencyType = dependencyType;
         }
 
-        public Node<T> GetParentNode()
+        public Node GetParentNode()
         {
             return parent;
         }
-        public void SetParentNode(Node<T> parentNode)
+        public void SetParentNode(Node parentNode)
         {
             this.parent = parentNode;
         }
-        public Node<T> GetChildNode()
+        public Node GetChildNode()
         {
             return child;
         }

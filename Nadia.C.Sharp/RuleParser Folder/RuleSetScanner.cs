@@ -6,21 +6,21 @@ using Nadia.C.Sharp.NodeFolder;
 
 namespace Nadia.C.Sharp.RuleParserFolder
 {
-    public class RuleSetScanner<T>
+    public class RuleSetScanner
     {
 
-        private IScanFeeder<T> scanFeeder = null;
+        private IScanFeeder scanFeeder = null;
         private ILineReader lineReader = null;
 
 
 
-        public RuleSetScanner(ILineReader reader, IScanFeeder<T> feeder)
+        public RuleSetScanner(ILineReader reader, IScanFeeder feeder)
         {
             scanFeeder = feeder;
             lineReader = reader;
         }
 
-        public void SetScanFeeder(IScanFeeder<T> scanFeeder, ILineReader lineReader)
+        public void SetScanFeeder(IScanFeeder scanFeeder, ILineReader lineReader)
         {
             this.scanFeeder = scanFeeder;
             this.lineReader = lineReader;
@@ -112,11 +112,11 @@ namespace Nadia.C.Sharp.RuleParserFolder
             }
         }
 
-        public void establishNodeSet()
+        public void EstablishNodeSet()
         {
-            NodeSet<T> ns = scanFeeder.GetNodeSet();
+            NodeSet ns = scanFeeder.GetNodeSet();
             ns.SetDependencyMatrix(scanFeeder.CreateDependencyMatrix());
-            List<Node<T>> sortedList = TopoSort<T>.BfsTopoSort(ns.GetNodeMap(), ns.GetNodeIdMap(), ns.GetDependencyMatrix().GetDependencyMatrixArray());
+            List<Node> sortedList = TopoSort.BfsTopoSort(ns.GetNodeMap(), ns.GetNodeIdMap(), ns.GetDependencyMatrix().GetDependencyMatrixArray());
             if (sortedList.Count != 0)
             {
                 ns.SetNodeSortedList(sortedList);
@@ -129,9 +129,9 @@ namespace Nadia.C.Sharp.RuleParserFolder
 
         public void EstablishNodeSet(Dictionary<string, Record> recordMapOfNodes)
         {
-            NodeSet<T> ns = scanFeeder.GetNodeSet();
+            NodeSet ns = scanFeeder.GetNodeSet();
             ns.SetDependencyMatrix(scanFeeder.CreateDependencyMatrix());
-            List<Node<T>> sortedList = TopoSort<T>.DfsTopoSort(ns.GetNodeMap(), ns.GetNodeIdMap(), ns.GetDependencyMatrix().GetDependencyMatrixArray(), recordMapOfNodes);
+            List<Node> sortedList = TopoSort.DfsTopoSort(ns.GetNodeMap(), ns.GetNodeIdMap(), ns.GetDependencyMatrix().GetDependencyMatrixArray(), recordMapOfNodes);
             if (sortedList.Count != 0)
             {
                 ns.SetNodeSortedList(sortedList);

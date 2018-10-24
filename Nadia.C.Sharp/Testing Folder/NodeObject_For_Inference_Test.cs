@@ -14,7 +14,7 @@ namespace Nadia.C.Sharp.TestingFolder
             this.valueArray = valueArray;
         }
 
-        public string getName()
+        public string GetName()
         {
             return name;
         }
@@ -24,7 +24,7 @@ namespace Nadia.C.Sharp.TestingFolder
             this.name = name;
         }
 
-        public string[] getValueArray()
+        public string[] GetValueArray()
         {
             return valueArray;
         }
@@ -34,7 +34,7 @@ namespace Nadia.C.Sharp.TestingFolder
             this.valueArray = valueArray;
         }
 
-        public string getValue()
+        public string GetValue()
         {
             Random rand = new Random();
             this.value = this.valueArray[rand.Next(2)];

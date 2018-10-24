@@ -8,7 +8,7 @@ using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.RuleParserFolder
 {
-    public class RuleSetParser<T> : IScanFeeder<T>
+    public class RuleSetParser : IScanFeeder
     {
         //  enum LineType {META, VALUE_CONCLUSION, EXPR_CONCLUSION, COMPARISON, WARNING}
         /*
@@ -34,15 +34,15 @@ namespace Nadia.C.Sharp.RuleParserFolder
         Regex COMPARISON_MATCHER = new Regex(@"(^[MLU(Da)]+)(O)([MLUQ(No)(Da)(De)(Ha)(Url)(Id)]*$)");
         Regex ITERATE_MATCHER = new Regex(@"(^[MLU(No)(Da)]+)(I)([MLU]+$)");
         Regex WARNING_MATCHER = new Regex(@"WARNING");
-        NodeSet<T> nodeSet = new NodeSet<T>();
-        List<Dependency<T>> dependencyList = new List<Dependency<T>>();
+        NodeSet nodeSet = new NodeSet();
+        List<Dependency> dependencyList = new List<Dependency>();
 
 
 
         public void HandleParent(string parentText, int lineNumber)
         {
 
-            Node<T> data = nodeSet.GetNodeMap()[parentText];
+            Node data = nodeSet.GetNodeMap().ContainsKey(parentText)?nodeSet.GetNodeMap()[parentText]:null;
 
             if (data == null)
             {
@@ -59,22 +59,22 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     if (match.Success)
                     {
                         string variableName;
-                        Node<T> tempNode;
+                        Node tempNode;
                         List<string> possibleParentNodeKeyList;
                         switch(i){
                             case 3:  //warningMatcher case
                                 HandleWarning(parentText);
                                 break;
                             case 0:  //metaMatcher case
-                                data = new MetadataLine<T>(parentText, tokens);
+                                data = new MetadataLine(parentText, tokens);
 
-                                if (data.GetFactValue().GetValue().Equals("WARNING"))
+                                if (data.GetFactValue().GetFactValueType() != FactValueType.LIST && FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                 {
                                     HandleWarning(parentText);
                                 }
                                 break;
                             case 1: //valueConclusionLine case
-                                data = new ValueConclusionLine<T>(parentText, tokens);
+                                data = new ValueConclusionLine(parentText, tokens);
                                 if (match.Groups[2] != null
                                     || (tokens.tokensString.Equals("L") || tokens.tokensString.Equals("LM") || tokens.tokensString.Equals("ML") || tokens.tokensString.Equals("M")))
                                 {
@@ -88,17 +88,17 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     if (possibleParentNodeKeyList.Count != 0)
                                     {
                                         possibleParentNodeKeyList.ForEach(item => {
-                                            this.dependencyList.Add(new Dependency<T>(nodeSet.GetNodeMap()[item], tempNode, DependencyType.GetOr())); //Dependency Type :OR
+                                            this.dependencyList.Add(new Dependency(nodeSet.GetNodeMap()[item], tempNode, DependencyType.GetOr())); //Dependency Type :OR
                                         });
                                     }
                                 }   
-                                if(data.GetFactValue().GetValue().Equals("WARNING"))
+                                if(FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                 {
                                     HandleWarning(parentText);
                                 }
                                 break;
                             case 2: //exprConclusionMatcher case 
-                                data = new ExprConclusionLine<T>(parentText, tokens);
+                                data = new ExprConclusionLine(parentText, tokens);
                                 
                                 variableName = data.GetVariableName();
                                 tempNode = data;
@@ -111,10 +111,10 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                 if(possibleParentNodeKeyList.Count!= 0)
                                 {
                                     possibleParentNodeKeyList.ForEach(item => {
-                                        this.dependencyList.Add(new Dependency<T>(nodeSet.GetNodeMap()[item], tempNode, DependencyType.GetOr())); //Dependency Type :OR
+                                        this.dependencyList.Add(new Dependency(nodeSet.GetNodeMap()[item], tempNode, DependencyType.GetOr())); //Dependency Type :OR
                                     });
                                 }
-                                if(data.GetFactValue().GetValue().Equals("WARNING"))
+                                if(FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                 {
                                     HandleWarning(parentText);
                                 }
@@ -127,11 +127,11 @@ namespace Nadia.C.Sharp.RuleParserFolder
                         data.SetNodeLine(lineNumber);
                         if (data.GetLineType().Equals(LineType.META))
                         {
-                            if (((MetadataLine<T>)data).GetMetaType().Equals(MetaType.INPUT))
+                            if (((MetadataLine)data).GetMetaType().Equals(MetaType.INPUT))
                             {
                                 this.nodeSet.GetInputMap().Add(data.GetVariableName(), data.GetFactValue());
                             }
-                            else if (((MetadataLine<T>)data).GetMetaType().Equals(MetaType.FIXED))
+                            else if (((MetadataLine)data).GetMetaType().Equals(MetaType.FIXED))
                             {
                                 this.nodeSet.GetFactMap().Add(data.GetVariableName(), data.GetFactValue());
                             }
@@ -213,7 +213,8 @@ namespace Nadia.C.Sharp.RuleParserFolder
                  */
 
 
-                Node<T> data = nodeSet.GetNodeMap()[childText];
+                Node data = null;
+                nodeSet.GetNodeMap().TryGetValue(childText, out data);
                 Tokens tokens = Tokenizer.GetTokens(childText);
 
                 if (data == null)
@@ -221,7 +222,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     //              valueConclusionMatcher =Pattern.compile("(^U)([LMU(Da)(No)(De)(Ha)(Url)(Id)]+$)"); // child statement for ValueConclusionLine starts with AND(OR), AND MANDATORY(OPTIONALLY, POSSIBLY) or AND (MANDATORY) (NOT) KNOWN
 
                     Regex[] matchPatterns = { VALUE_MATCHER, COMPARISON_MATCHER, ITERATE_MATCHER, EXPRESSION_CONCLUSION_MATCHER, WARNING_MATCHER };
-                    Node<T> tempNode;
+                    Node tempNode;
                     List<string> possibleChildNodeKeyList;
 
                     for (int i = 0; i < matchPatterns.Length; i++)
@@ -238,7 +239,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     HandleWarning(childText);
                                     break;
                                 case 0:  // valueConclusionMatcher case
-                                    data = new ValueConclusionLine<T>(childText, tokens);
+                                    data = new ValueConclusionLine(childText, tokens);
 
                                     tempNode = data;
                                     possibleChildNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key=> Regex.Match(key, "(^" + tempNode.GetVariableName() + ")(.(IS(?!(\\sIN LIST))).*)*").Success).ToList();
@@ -246,21 +247,21 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     if (possibleChildNodeKeyList.Count != 0)
                                     {
                                         possibleChildNodeKeyList.ForEach(item => {
-                                            this.dependencyList.Add(new Dependency<T>(tempNode, nodeSet.GetNodeMap()[item], DependencyType.GetOr())); //Dependency Type :OR
+                                            this.dependencyList.Add(new Dependency(tempNode, nodeSet.GetNodeMap()[item], DependencyType.GetOr())); //Dependency Type :OR
                                         });
                                     }
 
-                                    if (data.GetFactValue().GetValue().Equals("WARNING"))
+                                    if (FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                     {
                                         HandleWarning(parentText);
                                     }
                                     break;
                                 case 1:  // comparisonMatcher case
-                                    data = new ComparisonLine<T>(childText, tokens);
+                                    data = new ComparisonLine(childText, tokens);
 
-                                    FactValueType rhsType = ((ComparisonLine<T>)data).GetRHS().GetFactValueType();
-                                    string rhsString = ((ComparisonLine<T>)data).GetRHS().GetValue().ToString();
-                                    string lhsString = ((ComparisonLine<T>)data).GetLHS();
+                                    FactValueType rhsType = ((ComparisonLine)data).GetRHS().GetFactValueType();
+                                    string rhsString = FactValue.GetValueInString(((ComparisonLine)data).GetRHS().GetFactValueType(), ((ComparisonLine)data).GetRHS());
+                                    string lhsString = ((ComparisonLine)data).GetLHS();
                                     tempNode = data;
                                     possibleChildNodeKeyList = rhsType.Equals(FactValueType.STRING) ?
                                                                 nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "(^" + lhsString + ")(.(IS(?!(\\sIN LIST))).*)*").Success || Regex.Match(key, "(^" + rhsString + ")(.(IS(?!(\\sIN LIST))).*)*").Success).ToList()
@@ -270,24 +271,24 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     if (possibleChildNodeKeyList.Count != 0)
                                     {
                                         possibleChildNodeKeyList.ForEach(item => {
-                                            this.dependencyList.Add(new Dependency<T>(tempNode, nodeSet.GetNodeMap()[item], DependencyType.GetOr())); //Dependency Type :OR
+                                            this.dependencyList.Add(new Dependency(tempNode, nodeSet.GetNodeMap()[item], DependencyType.GetOr())); //Dependency Type :OR
                                         });
                                     }
 
-                                    if (data.GetFactValue().GetValue().Equals("WARNING"))
+                                    if (FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                     {
                                         HandleWarning(parentText);
                                     }
                                     break;
                                 case 2:  // comparisonMatcher case
-                                    data = new IterateLine<T>(childText, tokens);
-                                    if (data.GetFactValue().GetValue().Equals("WARNING"))
+                                    data = new IterateLine(childText, tokens);
+                                    if (FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                     {
                                         HandleWarning(parentText);
                                     }
                                     break;
                             case 3: //exprConclusionMatcher case
-                                data = new ExprConclusionLine<T>(childText, tokens);
+                                data = new ExprConclusionLine(childText, tokens);
 
                                 /*
                                  * In this case, there is no mechanism to find possible parent nodes.
@@ -295,7 +296,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                  * If ExprConclusion node is used as a child, then it means that this node is a local node which has to be strictly bound to its parent node only.  
                                  */
 
-                                if (data.GetFactValue().GetValue().Equals("WARNING"))
+                                    if (FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                 {
                                     HandleWarning(parentText);
                                 }
@@ -310,7 +311,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     }
                 }
 
-                this.dependencyList.Add(new Dependency<T>(this.nodeSet.GetNode(parentText), data, dependencyType));
+                this.dependencyList.Add(new Dependency(this.nodeSet.GetNode(parentText), data, dependencyType));
             }
         
         }
@@ -320,55 +321,55 @@ namespace Nadia.C.Sharp.RuleParserFolder
         {
 
             Tokens tokens = Tokenizer.GetTokens(itemText);
-            FactValue<T> fv;
+            FactValue fv;
             if(tokens.tokensString.Equals("Da"))
             {
                 
                 DateTime factValueInDate;
                 DateTime.TryParseExact(itemText, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out factValueInDate);
-                fv = FactValue<T>.Parse(factValueInDate);
+                fv = FactValue.Parse(factValueInDate);
             }
             else if(tokens.tokensString.Equals("De"))
             {
-                fv = FactValue<T>.Parse(Double.Parse(itemText));
+                fv = FactValue.Parse(Double.Parse(itemText));
             }
             else if(tokens.tokensString.Equals("No"))
             {
-                fv = FactValue<T>.Parse(Int32.Parse(itemText));
+                fv = FactValue.Parse(Int32.Parse(itemText));
             }
             else if(tokens.tokensString.Equals("Ha"))
             {
-                fv = FactValue<T>.ParseHash(itemText);
+                fv = FactValue.ParseHash(itemText);
             }
             else if(tokens.tokensString.Equals("Url"))
             {
-                fv = FactValue<T>.ParseURL(itemText);
+                fv = FactValue.ParseURL(itemText);
             }
             else if(tokens.tokensString.Equals("Id"))
             {
-                fv = FactValue<T>.ParseUUID(itemText);
+                fv = FactValue.ParseUUID(itemText);
             }
             else if(Regex.Match(itemText, "FfAaLlSsEe").Success||Regex.Match(itemText, "TtRrUuEe").Success)
             {
-                fv =FactValue<T>.Parse(Boolean.Parse(itemText));
+                fv =FactValue.Parse(Boolean.Parse(itemText));
             }
             else
             {
-                fv = FactValue<T>.Parse(itemText);
+                fv = FactValue.Parse(itemText);
             }
-            String stringToGetFactValue = (parentText.Substring(5, parentText.IndexOf("AS", StringComparison.CurrentCulture))).Trim();
+            string stringToGetFactValue = (parentText.Substring(5, parentText.IndexOf("AS", StringComparison.CurrentCulture)-5)).Trim(); //the int value of 5 refers to the length of keyword, 'INPUT', +1
             if(metaType.Equals(MetaType.INPUT))
             {
-                (this.nodeSet.GetInputMap()[stringToGetFactValue].GetValue() as List<FactValue<T>>).Add(fv);
+                ((FactListValue)this.nodeSet.GetInputMap()[stringToGetFactValue]).AddFactValueToListValue(fv);
             }
             else if(metaType.Equals(MetaType.FIXED))
             {
-                (this.nodeSet.GetFactMap()[stringToGetFactValue].GetValue() as List<FactValue<T>>).Add(fv);
+                ((FactListValue)this.nodeSet.GetFactMap()[stringToGetFactValue]).AddFactValueToListValue(fv);
             }
     
         }
 
-        public NodeSet<T> GetNodeSet()
+        public NodeSet GetNodeSet()
         {
             return this.nodeSet;
         }
@@ -383,15 +384,15 @@ namespace Nadia.C.Sharp.RuleParserFolder
          * when a virtual node is created, all 'AND' children should be connected to the virtual node as 'AND' children
          * and the virtual node should be a 'OR' child of the original parent node 
          */
-        public Dictionary<string, Node<T>> handlingVirtualNode(List<Dependency<T>> dependencyList)
+        public Dictionary<string, Node> HandlingVirtualNode(List<Dependency> dependencyList)
         {
 
-            Dictionary<string, Node<T>> virtualNodeMap = new Dictionary<string, Node<T>>();
+            Dictionary<string, Node> virtualNodeMap = new Dictionary<string, Node>();
 
 
             nodeSet.GetNodeMap().Values.ToList().ForEach((node)=>{
                 virtualNodeMap.Add(node.GetNodeName(), node);
-                List< Dependency<T>> dpList = dependencyList.Where(dp => node.GetNodeName().Equals(dp.GetParentNode().GetNodeName())).ToList();
+                List< Dependency> dpList = dependencyList.Where(dp => node.GetNodeName().Equals(dp.GetParentNode().GetNodeName())).ToList();
                                    
 
                 /*
@@ -402,7 +403,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                 int or = 0;
                 if (dpList.Count != 0)
                 {
-                    foreach (Dependency<T> dp in dpList) //can this for each loop be converted to dpList.stream().forEachOrdered() ?
+                    foreach (Dependency dp in dpList) //can this for each loop be converted to dpList.stream().forEachOrdered() ?
                     {
                         if ((dp.GetDependencyType() & DependencyType.GetAnd()) == DependencyType.GetAnd())
                         {
@@ -422,16 +423,16 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     {
 
                         string parentNodeOfVirtualNodeName = node.GetNodeName();
-                        Node<T> virtualNode = new ValueConclusionLine<T>("VirtualNode-" + parentNodeOfVirtualNodeName, Tokenizer.GetTokens("VirtualNode-" + parentNodeOfVirtualNodeName));
+                        Node virtualNode = new ValueConclusionLine("VirtualNode-" + parentNodeOfVirtualNodeName, Tokenizer.GetTokens("VirtualNode-" + parentNodeOfVirtualNodeName));
                         this.nodeSet.GetNodeIdMap().Add(virtualNode.GetNodeId(), "VirtualNode-" + parentNodeOfVirtualNodeName);
                         virtualNodeMap.Add("VirtualNode-" + parentNodeOfVirtualNodeName, virtualNode);
                         if (mandatoryAnd > 0)
                         {
-                            dependencyList.Add(new Dependency<T>(node, virtualNode, (DependencyType.GetMandatory() | DependencyType.GetOr())));
+                            dependencyList.Add(new Dependency(node, virtualNode, (DependencyType.GetMandatory() | DependencyType.GetOr())));
                         }
                         else
                         {
-                            dependencyList.Add(new Dependency<T>(node, virtualNode, DependencyType.GetOr()));
+                            dependencyList.Add(new Dependency(node, virtualNode, DependencyType.GetOr()));
                         }
                         dpList.Where(dp =>dp.GetDependencyType() == DependencyType.GetAnd() || dp.GetDependencyType() == (DependencyType.GetMandatory() | DependencyType.GetAnd()))
                               .ToList().ForEach(dp=>dp.SetParentNode(virtualNode));
@@ -445,11 +446,11 @@ namespace Nadia.C.Sharp.RuleParserFolder
         public int[,] CreateDependencyMatrix()
         {
 
-            this.nodeSet.SetNodeMap(handlingVirtualNode(this.dependencyList));
+            this.nodeSet.SetNodeMap(HandlingVirtualNode(this.dependencyList));
             /*
              * number of rule is not always matched with the last ruleId in Node 
              */
-            int numberOfRules = Node<T>.GetStaticNodeId();
+            int numberOfRules = Node.GetStaticNodeId();
             
             int[,] dependencyMatrix = new int[numberOfRules, numberOfRules];
         
@@ -466,7 +467,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
         }
 
        
-        public void SetNodeSet(NodeSet<T> ns)
+        public void SetNodeSet(NodeSet ns)
         {
             this.nodeSet = ns;
         }

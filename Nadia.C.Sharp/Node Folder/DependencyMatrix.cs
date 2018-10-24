@@ -29,7 +29,7 @@ namespace Nadia.C.Sharp.NodeFolder
         public DependencyMatrix(int[,] dependencyMatrix)
         {
             this.dependencyMatrix = dependencyMatrix;
-            this.dependencyMatrixSize = this.dependencyMatrix.Length/2;
+            this.dependencyMatrixSize = this.dependencyMatrix.GetLength(1);
         }
 
         public int[,] GetDependencyMatrixArray()

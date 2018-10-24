@@ -1,45 +1,28 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactUUIDValue<T> : FactValue<T>
+    public class FactUUIDValue : FactValue
     {
-        private String value;
-        private String defaultValue;
+        private string value;
 
-        public FactUUIDValue(String uuid)
+        public FactUUIDValue(string uuid)
         {
             SetValue(uuid);
         }
 
-
-
-        public void SetValue(String uuid)
+        public void SetValue(string uuid)
         {
             this.value = uuid;
         }
-
-
 
         public override FactValueType GetFactValueType()
         {
             return FactValueType.UUID;
         }
 
-
-        public override void SetDefaultValue(T defaultValue)
+        public string GetValue()
         {
-            this.defaultValue = (string)Convert.ChangeType(defaultValue, typeof(string));
-        }
-
-        public override T GetValue()
-        {
-            return (T)Convert.ChangeType(this.value, typeof(T));
-        }
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
+            return this.value;
         }
 
     }

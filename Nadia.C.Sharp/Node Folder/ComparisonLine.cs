@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Nadia.C.Sharp.FactValueFolder;
 using Nadia.C.Sharp.RuleParserFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class ComparisonLine<T> : Node<T>
+    public class ComparisonLine : Node
     {
         private string operatorString;
 
         private string lhs;
-        private FactValue<T> rhs;
+        private FactValue rhs;
 
         public ComparisonLine(string childText, Tokens tokens) : base(childText, tokens)
         {
@@ -66,11 +67,10 @@ namespace Nadia.C.Sharp.NodeFolder
             return this.lhs;
         }
 
-        public FactValue<T> GetRHS()
+        public FactValue GetRHS()
         {
             return this.rhs;
         }
-
 
         public override LineType GetLineType()
         {
@@ -78,7 +78,7 @@ namespace Nadia.C.Sharp.NodeFolder
         }
 
 
-        public override FactValue<T> SelfEvaluate(Dictionary<string, FactValue<T>> workingMemory, Jint.Engine jint)
+        public override FactValue SelfEvaluate(Dictionary<string, FactValue> workingMemory, Jint.Engine jint)
         {
 
             /*
@@ -86,9 +86,11 @@ namespace Nadia.C.Sharp.NodeFolder
              * 
              */
 
-            FactValue<T> workingMemoryLhsValue = workingMemory.ContainsKey(this.variableName) ? workingMemory[this.variableName] : null;
-            FactValue<T> workingMemoryRhsValue = this.GetRHS().GetFactValueType().Equals(FactValueType.STRING) ?
-                                                      workingMemory[this.GetRHS().GetValue().ToString()]
+            FactValue workingMemoryLhsValue = workingMemory.ContainsKey(this.variableName) ? workingMemory[this.variableName] : null;
+            string rhsValueInString = FactValue.GetValueInString(this.GetRHS().GetFactValueType(), this.GetRHS());
+
+            FactValue workingMemoryRhsValue = this.GetRHS().GetFactValueType().Equals(FactValueType.STRING) ?
+                                                  workingMemory[rhsValueInString]
                                                      :
                                                       this.GetRHS();
 
@@ -115,20 +117,20 @@ namespace Nadia.C.Sharp.NodeFolder
                 switch (this.operatorString)
                 {
                     case ">":
-                        returnValue = ((DateTime)(object)workingMemoryLhsValue.GetValue()).CompareTo(((DateTime)(object)workingMemoryRhsValue.GetValue())) > 0 ? true : false;
-                        return FactValue<T>.Parse(returnValue);
+                        returnValue = (((FactDateValue)workingMemoryLhsValue).GetValue()).CompareTo((((FactDateValue)workingMemoryRhsValue).GetValue())) > 0 ? true : false;
+                        return FactValue.Parse(returnValue);
 
                     case ">=":
-                        returnValue = ((DateTime)(object)workingMemoryLhsValue.GetValue()).CompareTo(((DateTime)(object)workingMemoryRhsValue.GetValue())) >= 0 ? true : false;
-                        return FactValue<T>.Parse(returnValue);
+                        returnValue = (((FactDateValue)workingMemoryLhsValue).GetValue()).CompareTo((((FactDateValue)workingMemoryRhsValue).GetValue())) >= 0 ? true : false;
+                        return FactValue.Parse(returnValue);
 
                     case "<":
-                        returnValue = ((DateTime)(object)workingMemoryLhsValue.GetValue()).CompareTo(((DateTime)(object)workingMemoryRhsValue.GetValue())) < 0 ? true : false;
-                        return FactValue<T>.Parse(returnValue);
+                        returnValue = (((FactDateValue)workingMemoryLhsValue).GetValue()).CompareTo((((FactDateValue)workingMemoryRhsValue).GetValue())) < 0 ? true : false;
+                        return FactValue.Parse(returnValue);
 
                     case "<=":
-                        returnValue = ((DateTime)(object)workingMemoryLhsValue.GetValue()).CompareTo(((DateTime)(object)workingMemoryRhsValue.GetValue())) <= 0 ? true : false;
-                        return FactValue<T>.Parse(returnValue);
+                        returnValue = (((FactDateValue)workingMemoryLhsValue).GetValue()).CompareTo((((FactDateValue)workingMemoryRhsValue).GetValue())) <= 0 ? true : false;
+                        return FactValue.Parse(returnValue);
 
                 }
                 //          script = "new Date("+((FactDateValue)workingMemoryLhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getDayOfMonth()+")"+operator+"new Date("+((FactDateValue)workingMemoryRhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getDayOfMonth()+");" ;
@@ -136,22 +138,22 @@ namespace Nadia.C.Sharp.NodeFolder
             else if (workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DECIMAL) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DOUBLE)
                      || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.INTEGER) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.NUMBER))
             {
-                script = workingMemoryLhsValue.GetValue().ToString() + operatorString + workingMemoryRhsValue.GetValue().ToString();
+                script = FactValue.GetValueInString(workingMemoryLhsValue.GetFactValueType(), workingMemoryLhsValue) + operatorString + FactValue.GetValueInString(workingMemoryRhsValue.GetFactValueType(), workingMemoryRhsValue);
             }
             else
             {
                 if (workingMemoryRhsValue != null && workingMemoryLhsValue != null)
                 {
-                    script = "'" + workingMemoryLhsValue.GetValue().ToString() + "' " + operatorString + " '" + workingMemoryRhsValue.GetValue().ToString() + "'";
+                    script = "'" + FactValue.GetValueInString(workingMemoryLhsValue.GetFactValueType(), workingMemoryLhsValue) + "' " + operatorString + " '" + FactValue.GetValueInString(workingMemoryRhsValue.GetFactValueType(), workingMemoryRhsValue) + "'";
                 }
 
             }
             Boolean result;
-            FactValue<T> fv = null;
+            FactValue fv = null;
             if (workingMemoryRhsValue != null && workingMemoryLhsValue != null)
             {
                 result = Convert.ToBoolean(jint.Execute(script).GetCompletionValue());
-                fv = FactValue<T>.Parse(result);
+                fv = FactValue.Parse(result);
             }
 
 

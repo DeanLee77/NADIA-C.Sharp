@@ -1,14 +1,18 @@
 ﻿using System;
 namespace Nadia.C.Sharp.FactValueFolder
 {
-    public class FactBooleanValue<T> : FactValue<T> 
+    public class FactBooleanValue : FactValue 
     {
         private bool value;
-        private bool? defaultValue; //bool? means nullable bool primative type
 
         public FactBooleanValue(bool booleanValue)
         {
             SetValue(booleanValue);
+        }
+
+        public FactBooleanValue(FactValue fv)
+        {
+            this.value = Boolean.Parse(FactValue.GetValueInString(FactValueType.BOOLEAN, fv));
         }
 
 
@@ -17,9 +21,9 @@ namespace Nadia.C.Sharp.FactValueFolder
             this.value = booleanValue;
         }
 
-        public FactValue<T> NegatingValue()
+        public FactBooleanValue NegatingValue()
         {
-            return FactValue<T>.Parse(!this.value);
+            return new FactBooleanValue(!this.value);
         }
 
         public override FactValueType GetFactValueType()
@@ -27,23 +31,9 @@ namespace Nadia.C.Sharp.FactValueFolder
             return FactValueType.BOOLEAN;
         }
 
-
-        public override void SetDefaultValue(T defaultValue)
+        public bool GetValue()
         {
-            this.defaultValue = (bool)Convert.ChangeType(defaultValue, typeof(bool));
+            return this.value;
         }
-
-
-        public override T GetValue()
-        {
-            return (T)Convert.ChangeType(this.value, typeof(T));
-        }
-
-
-        public override T GetDefaultValue()
-        {
-            return (T)Convert.ChangeType(this.defaultValue, typeof(T));
-        }
-
     }
 }

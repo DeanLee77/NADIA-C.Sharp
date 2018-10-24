@@ -17,17 +17,17 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
      * List<String> exclusiveList
      *    it stores all irrelevant rule as assessment goes by, and the parameter String represents rule.getName()
      */
-    public class AssessmentState<T>
+    public class AssessmentState
     {
         
-        private Dictionary<string, FactValue<T>> workingMemory;
+        private Dictionary<string, FactValue> workingMemory;
         private List<string> inclusiveList;
         private List<string> exclusiveList;
         private List<string> summaryList;
         private List<string> mandatoryList;
         public AssessmentState()
         {
-            this.workingMemory = new Dictionary<string, FactValue<T>>();
+            this.workingMemory = new Dictionary<string, FactValue>();
             this.inclusiveList = new List<string>();  // this is to capture all relevant rules 
             this.summaryList = new List<string>(); // this is to store all determined rules within assessment in order.
             this.exclusiveList = new List<string>();// this is to capture all trimmed rules 
@@ -36,7 +36,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         /*
          * this method is to get workingMemory 
          */
-        public Dictionary<string, FactValue<T>> GetWorkingMemory()
+        public Dictionary<string, FactValue> GetWorkingMemory()
         {
             return workingMemory;
         }
@@ -44,7 +44,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * this method is to set workingMemory from RuleSet instance. this method has to be executed after AssessmentState object initialization.
          * all facts instance will be transfered from ruleMap in RuleSet instance to workingMemory in AssessmentState instance 
          */
-        public void TransferFactMapToWorkingMemory(NodeSet<T> nodeSet)
+        public void TransferFactMapToWorkingMemory(NodeSet nodeSet)
         {
             if (!(nodeSet.GetFactMap().Count == 0))
             {
@@ -54,7 +54,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         /*
          * this is simply for setting workingMemory with a given workingMemory
          */
-        public void SetWorkingMemory(Dictionary<string, FactValue<T>> workingMemory)
+        public void SetWorkingMemory(Dictionary<string, FactValue> workingMemory)
         {
             this.workingMemory = workingMemory;
         }
@@ -62,7 +62,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * it allows a user to look up the workingMemory
          * @return FactValue
          */
-        public FactValue<T> LookupWorkingMemory(string keyName)
+        public FactValue LookupWorkingMemory(string keyName)
         {
             return workingMemory[keyName];
         }
@@ -154,19 +154,19 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
          * then the variableName of the node should be passed to this method.
          */
 
-        public void SetFact(string nodeVariableName, FactValue<T> value)
+        public void SetFact(string nodeVariableName, FactValue value)
         {
             if (workingMemory.ContainsKey(nodeVariableName))
             {
-                FactValue<T> tempFv = workingMemory[nodeVariableName];
+                FactValue tempFv = workingMemory[nodeVariableName];
 
                 if (tempFv.GetFactValueType().Equals(FactValueType.LIST))
                 {
-                    ((FactListValue<T>)tempFv).AddFactValueToListValue(tempFv);
+                    ((FactListValue)tempFv).AddFactValueToListValue(tempFv);
                 }
                 else
                 {
-                    FactListValue<T> flv = FactValue<T>.ParseList((T)Convert.ChangeType(new List<FactValue<T>>(), typeof(T)));
+                    FactListValue flv = FactValue.Parse(new List<FactValue>());
                     flv.AddFactValueToListValue(tempFv);
                 }
             }
@@ -176,7 +176,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
         }
 
-        public FactValue<T> GetFact(string name)
+        public FactValue GetFact(string name)
         {
             return workingMemory[name];
         }

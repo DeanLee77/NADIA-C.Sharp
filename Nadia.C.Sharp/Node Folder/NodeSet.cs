@@ -5,25 +5,25 @@ using Nadia.C.Sharp.FactValueFolder;
 
 namespace Nadia.C.Sharp.NodeFolder
 {
-    public class NodeSet<T>
+    public class NodeSet
     {
         private string nodeSetName;
-        private Dictionary<string, Node<T>> nodeMap ;
+        private Dictionary<string, Node> nodeMap ;
         private Dictionary<int?, string> nodeIdMap;
-        private List<Node<T>> sortedNodeList;
-        private Dictionary<string, FactValue<T>> inputMap;
-        private Dictionary<string, FactValue<T>> factMap;
-        private Node<T> defaultGoalNode;
+        private List<Node> sortedNodeList;
+        private Dictionary<string, FactValue> inputMap;
+        private Dictionary<string, FactValue> factMap;
+        private Node defaultGoalNode;
         private DependencyMatrix dependencyMatrix;
 
         public NodeSet()
         {
             this.nodeSetName = "";
-            this.inputMap = new Dictionary<string,FactValue<T>>();
-            this.factMap = new Dictionary<string, FactValue<T>>();
-            this.nodeMap = new Dictionary<string, Node<T>>();
+            this.inputMap = new Dictionary<string,FactValue>();
+            this.factMap = new Dictionary<string, FactValue>();
+            this.nodeMap = new Dictionary<string, Node>();
             this.nodeIdMap = new Dictionary<int?, string>();
-            this.sortedNodeList = new List<Node<T>>();
+            this.sortedNodeList = new List<Node>();
 
         }
         
@@ -57,49 +57,49 @@ namespace Nadia.C.Sharp.NodeFolder
         {
             return this.nodeIdMap;
         }
-        public void SetNodeMap(Dictionary<string, Node<T>> nodeMap)
+        public void SetNodeMap(Dictionary<string, Node> nodeMap)
         {
             this.nodeMap = nodeMap;
         }
-        public Dictionary<string, Node<T>> GetNodeMap()
+        public Dictionary<string, Node> GetNodeMap()
         {
             return this.nodeMap;
         }
         
-        public void SetNodeSortedList(List<Node<T>> sortedNodeList)
+        public void SetNodeSortedList(List<Node> sortedNodeList)
         {
             this.sortedNodeList = sortedNodeList;
         }
-        public List<Node<T>> GetNodeSortedList()
+        public List<Node> GetNodeSortedList()
         {
             return this.sortedNodeList;
         }
         
-        public Dictionary<string, FactValue<T>> GetInputMap()
+        public Dictionary<string, FactValue> GetInputMap()
         {
             return this.inputMap;
         }
         
-        public void SetFactMap(Dictionary<string, FactValue<T>> factMap)
+        public void SetFactMap(Dictionary<string, FactValue> factMap)
         {
             this.factMap = factMap;
         }
-        public Dictionary<string, FactValue<T>> GetFactMap()
+        public Dictionary<string, FactValue> GetFactMap()
         {
             return this.factMap;
         }
         
-        public Node<T> GetNode(int nodeIndex)
+        public Node GetNode(int nodeIndex)
         {
             return sortedNodeList[nodeIndex];
         }
         
-        public Node<T> GetNode(string nodeName)
+        public Node GetNode(string nodeName)
         {
             return nodeMap[nodeName];
         }
         
-        public Node<T> GetNodeByNodeId(int nodeId)
+        public Node GetNodeByNodeId(int nodeId)
         {
             return GetNode(GetNodeIdMap()[nodeId]);
         }
@@ -115,11 +115,11 @@ namespace Nadia.C.Sharp.NodeFolder
         {
             this.defaultGoalNode = this.nodeMap[name];
         }
-        public Node<T> GetDefaultGoalNode()
+        public Node GetDefaultGoalNode()
         {
             return this.defaultGoalNode;
         }
-        public Dictionary<string, FactValue<T>> TransferFactMapToWorkingMemory(Dictionary<string, FactValue<T>> workingMemory)
+        public Dictionary<string, FactValue> TransferFactMapToWorkingMemory(Dictionary<string, FactValue> workingMemory)
         {
             foreach(string str in inputMap.Keys)
             {
