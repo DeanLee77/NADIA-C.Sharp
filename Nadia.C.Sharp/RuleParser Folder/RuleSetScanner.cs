@@ -90,8 +90,8 @@ namespace Nadia.C.Sharp.RuleParserFolder
 
                         parent = parentStack.Peek();
 
-                        string tempLineTrimed = Regex.Replace(lineTrimed.Trim(), "^(OR\\s?|AND\\s?)?(MANDATORY|OPTIONALLY|POSSIBLY)?(\\s?NOT|\\s?KNOWN)*(NEEDS|WANTS)?", "");
-                        string tempFirstKeywordsGroup = Regex.Replace(lineTrimed.Trim(), tempLineTrimed, "");
+                        string tempLineTrimed = Regex.Replace(lineTrimed.Trim(), "^(OR\\s?|AND\\s?)?(MANDATORY|OPTIONALLY|POSSIBLY)?(\\s?NOT|\\s?KNOWN)*(NEEDS|WANTS)?", "").Trim();
+                        string tempFirstKeywordsGroup = Regex.Replace(lineTrimed.Trim(), tempLineTrimed, "").Trim();
                         parentStack.Push(tempLineTrimed.Trim()); // due to lineTrimed string contains keywords such as "AND", "OR", "AND KNOWN" or "OR KNOWN" so that it needs removing those keywords for the 'parentStack'
 
                         // is an indented child                     

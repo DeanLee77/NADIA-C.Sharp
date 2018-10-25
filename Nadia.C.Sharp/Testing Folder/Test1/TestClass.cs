@@ -15,6 +15,59 @@ namespace Nadia.C.Sharp
 {
     public class TestClass
     {
+        public static void Testing_For_Reading_NotKnownMandatoryPossiblyAndOptionally_4()
+        {
+
+        
+            RuleSetReader ilr = new RuleSetReader();
+            string filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+            filePath = Directory.GetParent(Directory.GetParent(filePath).FullName).FullName;
+            string newFilePath = filePath + @"/Testing Folder/Test1/testing NOT, KNOWN, Mandatory, Possibly, and Optionally.txt";
+            ilr.SetFileSource(newFilePath);
+                
+            RuleSetParser isf = new RuleSetParser();
+            RuleSetScanner rsc = new RuleSetScanner(ilr, isf);
+            rsc.ScanRuleSet();
+            rsc.EstablishNodeSet(null);
+            List<string> readLine = new List<string>();
+            isf.GetNodeSet().GetNodeSortedList().ForEach((node)=>{
+                readLine.Add("nodeName: " + node.GetNodeName());
+                isf.GetNodeSet().GetDependencyMatrix().GetToChildDependencyList(node.GetNodeId()).ForEach((dep)=>{
+                    readLine.Add("dependency type: " + isf.GetNodeSet().GetDependencyMatrix().GetDependencyType(node.GetNodeId(), isf.GetNodeSet().GetNodeMap()[isf.GetNodeSet().GetNodeIdMap()[dep]].GetNodeId()));
+                    readLine.Add("dependency: " + isf.GetNodeSet().GetNodeIdMap()[dep]);
+                });
+
+            });
+            
+            List<string> comparisonFileRead = new List<string>();
+            StreamReader streamReader = new StreamReader(filePath+@"/Testing Folder/Test1/Comparison File For Reading Not Known Man Op Pos file.txt");
+
+            String line;
+            while((line = streamReader.ReadLine()) != null)
+            {
+                comparisonFileRead.Add(line);
+            }
+            streamReader.Close();
+
+            if(readLine.Count == comparisonFileRead.Count)
+            {
+                List<int> tempArray = Enumerable.Range(0, readLine.Count - 1).Where((i)=> !readLine[i].Equals(comparisonFileRead[i])).ToList();
+                if(tempArray.Count == 0)
+                {
+                    Console.WriteLine("testing successful");
+                }
+                else
+                {
+                    Console.WriteLine("testing fail");
+                }
+            }
+            else
+            {
+                Console.WriteLine("testing fail");
+            }
+    
+        }
+
         public static void WeddingPlanner_Inference_Test_3()
         {
             
