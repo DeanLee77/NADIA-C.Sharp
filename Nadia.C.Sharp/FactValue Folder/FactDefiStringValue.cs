@@ -6,7 +6,8 @@ namespace Nadia.C.Sharp.FactValueFolder
     public class FactDefiStringValue : FactValue
     {
         private string value;
-        private string pattern = @"^("")(.*)("")(.)*";
+
+        private string pattern = @"^([""\“])(.*)([""\”])(\.)*";
         //private Regex regex = new Regex(pattern);
         private Match match;
 

@@ -1198,14 +1198,16 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                         }
                         //else if (Boolean.Parse(FactValue.GetValueInString(FactValueType.BOOLEAN, itemValueInWorkingMemory)).Equals(true)
-                        else if(((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
+                        else if(itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                                &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
                                 && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                         {
 
                             trueOrChildList.Add(item);
                         }
-                        else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
-                                && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()))
+                        else if (itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                                 &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
+                                 && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()))
                         {
                             trueOrChildList.Add(item);
 
@@ -1285,15 +1287,17 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                     if (ast.GetWorkingMemory().ContainsKey(nodeNameOfItem))
                     {
-                        if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
-                                && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot())
-                             && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
+                        if(itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                            &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
+                            && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot())
+                            && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
                         {
                             falseAndList.Add(item);
                         }
-                        else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
-                                    && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
-                                    && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown())
+                        else if(itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                                &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
+                                && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
+                                && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown())
                         )
                         {
                             if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))
@@ -1353,16 +1357,17 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 FactValue itemValueInWorkingMemory = null;
                 ast.GetWorkingMemory().TryGetValue(nodeNameOfItem, out itemValueInWorkingMemory);
 
-                if (ast.IsInclusiveList(nodeNameOfItem)
+                if(ast.IsInclusiveList(nodeNameOfItem)
                     && ast.GetWorkingMemory().ContainsKey(nodeNameOfItem))
                 {
-                    if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
-                         && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
+                    if(itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                        &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
+                        && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                     {
                         determinedTrueAndChildDependencies.Add(item);
                     }
-                    else if ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
-                          && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
+                    else if((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) == DependencyType.GetKnown()
+                            && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) != DependencyType.GetNot()))
                     {
                         if (!ast.GetWorkingMemory().ContainsKey("KNOWN " + nodeNameOfItem))
                         {
@@ -1372,9 +1377,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                         determinedTrueAndChildDependencies.Add(item);
                     }
-                    else if (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
-                          && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
-                          && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
+                    else if (itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
+                             &&((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
+                             && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot())
+                             && ((nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetKnown()) != DependencyType.GetKnown()))
                     {
                         if (!ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))
                         {
@@ -1417,6 +1423,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                         ast.AddItemToSummaryList("NOT KNOWN " + nodeSet.GetNodeIdMap()[item]);
                     }
                     else if (itemValueInWorkingMemory != null
+                             && itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
                              && (((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(false)
                              && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
                                  && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem)))
@@ -1432,6 +1439,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                         ast.AddItemToSummaryList("KNOWN " + nodeNameOfItem);
                     }
                     else if (itemValueInWorkingMemory != null
+                             && itemValueInWorkingMemory.GetFactValueType().Equals(FactValueType.BOOLEAN)
                              && ((FactBooleanValue)itemValueInWorkingMemory).GetValue().Equals(true)
                              && (nodeSet.GetDependencyMatrix().GetDependencyType(targetNode.GetNodeId(), item) & DependencyType.GetNot()) == DependencyType.GetNot()
                              && !ast.GetWorkingMemory().ContainsKey("NOT " + nodeNameOfItem))

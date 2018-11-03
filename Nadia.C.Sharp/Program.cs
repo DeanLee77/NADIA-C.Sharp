@@ -18,7 +18,11 @@ namespace Nadia.C.Sharp
             //DateTime dateTime = new DateTime(2018, 11, 1);
             //FactValue factValue = FactValue.Parse(dateTime);
             //Console.WriteLine(FactValue.GetValueInString(FactValueType.DATE, factValue));
-            TestClass.WeddingPlanner_Inference_Test_3();
+
+            //TestClass.Testing_ValueConclusionLine_6();
+            //TestClass.Testing_Inference_For_NotKnownManOpPo_5();
+            //TestClass.Testing_For_Reading_NotKnownMandatoryPossiblyAndOptionally_4();
+            //TestClass.WeddingPlanner_Inference_Test_3();
             //TestClass.TopoSortingTest_2();
             //TestClass.Testing();
         }

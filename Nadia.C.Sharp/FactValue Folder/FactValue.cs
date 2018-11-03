@@ -122,9 +122,8 @@ namespace Nadia.C.Sharp.FactValueFolder
 
 
 
-        public static FactValue GenerateFactValue(string str)
+        public static FactValue GenerateFactValue(FactValueType factValueType, string str)
         {
-            var factValueType = FindFactValueType(str);
             FactValue factValue = null;
 
             switch(factValueType)

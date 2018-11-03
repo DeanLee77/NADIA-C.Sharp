@@ -134,6 +134,11 @@
     <None Include="Testing Folder\Test1\ToposortedNodeName.txt" />
     <None Include="Testing Folder\Test1\Wedding Planner.txt" />
     <None Include="Testing Folder\Test1\Wedding_Planner Inference Test.txt" />
+    <None Include="Testing Folder\Test1\Comparison File For Reading Not Known Man Op Pos file.txt" />
+    <None Include="Testing Folder\Test1\testing NOT, KNOWN, Mandatory, Possibly, and Optionally.txt" />
+    <None Include="Testing Folder\Test1\testing NOT, KNOWN, Mandatory, Possibly, and Optionally inference.txt" />
+    <None Include="Testing Folder\Test1\Testing ValueConclusionLine Comparison.txt" />
+    <None Include="Testing Folder\Test1\Testing ValueConclusionLine with NOT, KNOW, IS, and IS IN LIST features.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

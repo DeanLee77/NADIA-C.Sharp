@@ -117,6 +117,7 @@ namespace Nadia.C.Sharp.NodeFolder
                     else
                     {
                         Regex regex = new Regex(@"^([""\“])(.*)([""\”]$)");
+                                      
                         Match match = regex.Match(lastToken);
 
                         if (match.Success)
@@ -138,7 +139,7 @@ namespace Nadia.C.Sharp.NodeFolder
         }
         protected bool IsBoolean(string str)
         {
-            return Regex.IsMatch(str,@"[FfAaLlSsEe]+") || Regex.IsMatch(str, @"[TtRrUuEe]+") ? true : false;
+            return Boolean.TryParse(str, out bool result);
         }
 
         protected bool IsInteger(string str)
