@@ -19,6 +19,8 @@ namespace Nadia.C.Sharp
             //FactValue factValue = FactValue.Parse(dateTime);
             //Console.WriteLine(FactValue.GetValueInString(FactValueType.DATE, factValue));
 
+            TestClass.Tesing_Full_ValueConclusion_Comparison_7();
+                     
             //TestClass.Testing_ValueConclusionLine_6();
             //TestClass.Testing_Inference_For_NotKnownManOpPo_5();
             //TestClass.Testing_For_Reading_NotKnownMandatoryPossiblyAndOptionally_4();

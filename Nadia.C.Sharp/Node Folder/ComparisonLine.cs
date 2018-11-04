@@ -32,7 +32,7 @@ namespace Nadia.C.Sharp.NodeFolder
              * In javascript engine '=' operator means assigning a value, hence if the operator is '=' then it needs to be replaced with '=='. 
              */
             int operatorIndex = tokens.tokensStringList.IndexOf("O");
-            this.operatorString = Regex.IsMatch(tokens.tokensList[operatorIndex], @"=") ? "==" : tokens.tokensList[operatorIndex];
+            this.operatorString = tokens.tokensList[operatorIndex].Equals("=") ? "==" : tokens.tokensList[operatorIndex];
 
             if (operatorString.Equals("=="))
             {
@@ -42,7 +42,7 @@ namespace Nadia.C.Sharp.NodeFolder
             {
                 string[] splitor = new string[] { this.operatorString };
 
-                this.variableName = childText.Split(splitor, StringSplitOptions.None)[0];
+                this.variableName = childText.Split(splitor, StringSplitOptions.None)[0].Trim();
             }
             this.lhs = variableName;
 
@@ -152,7 +152,7 @@ namespace Nadia.C.Sharp.NodeFolder
             FactValue fv = null;
             if (workingMemoryRhsValue != null && workingMemoryLhsValue != null)
             {
-                result = Convert.ToBoolean(jint.Execute(script).GetCompletionValue());
+                result = Convert.ToBoolean(jint.Execute(script).GetCompletionValue().ToString());
                 fv = FactValue.Parse(result);
             }
 

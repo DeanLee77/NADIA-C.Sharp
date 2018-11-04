@@ -303,7 +303,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 }
             }
 
-            questionList.ForEach((item) => ast.GetInclusiveList().Add(item));
+            questionList.ForEach((item) => ast.GetInclusiveList().Add(item.Trim()));
             
             return questionList;
         }

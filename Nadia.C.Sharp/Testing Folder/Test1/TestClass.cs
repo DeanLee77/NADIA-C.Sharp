@@ -110,11 +110,11 @@ namespace Nadia.C.Sharp
                          && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.STRING)
                          && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("the place the person normally locate the passport"))
                 {
-                    comparisonTempList.Add(i);
+                    comparisonTempList.Add(t);
                 }
                 else if (mockNode.Equals(actualNode.GetNodeName()))
                 {
-                    comparisonTempList.Add(i);
+                    comparisonTempList.Add(t);
                 }
             });
             if(comparisonTempList.Count ==  nodeListMock.Count())
@@ -122,95 +122,99 @@ namespace Nadia.C.Sharp
                 Console.WriteLine("Node side has been tested and passed");
             }
 
-        InferenceEngine ie = new InferenceEngine(isf.GetNodeSet());
-        Assessment ass = new Assessment(isf.GetNodeSet(), isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName());
-        int i = 0;
-        while(ie.GetAssessmentState().GetWorkingMemory()[isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName()]==null)
-        {
-            
-            Node nextQuestionNode = ie.GetNextQuestion(ass);
-                Dictionary<string, FactValueType> questionFvtMap = ie.findTypeOfElementToBeAsked(nextQuestionNode);
+            InferenceEngine ie = new InferenceEngine(isf.GetNodeSet());
+            Assessment ass = new Assessment(isf.GetNodeSet(), isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName());
+            int i = 0;
 
-            FactValueType fvt = null;
-            String answer;
-            
-            for(String question: ie.getQuestionsFromNodeToBeAsked(nextQuestionNode))
+            FactValue goalRuleValue = null;
+            ie.GetAssessmentState().GetWorkingMemory().TryGetValue(isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName(), out goalRuleValue);
+            while (goalRuleValue == null)
             {
-                System.out.println("questionFvt :"+questionFvtMap.get(question));
-                System.out.println("Question: " + question+"?");
-                if(question.equals("person's name"))
-                {
-                    answer = "John Smith";
-                }
-                else if(question.equals("person's dob"))
-                {
-                    answer = "11/12/1934";
-                }
-                else if(question.equals("the person missed the flight"))
-                {
-                    answer = "false";
-                }
-                else if(i == 0)
-                {
-                    answer = "true";
-                }
-                else if(question.equals("person passport type"))
-                {
-                    answer = "Australian";
-                }
-                else if(question.equalsIgnoreCase("person passport issued country"))
-                {
-                    answer = "Australia";
-                }
-                else if(question.equalsIgnoreCase("person age"))
-                {
-                    answer = "19";
-                }
-                else if(question.equalsIgnoreCase("a number of countries the person has travelled so far"))
-                {
-                    answer = "40";
-                }
-                else if(question.equalsIgnoreCase("current location of person's passport"))
-                {
-                    answer = "there";
-                }
-                else if(question.equalsIgnoreCase("the place the person normally locate the passport"))
-                {
-                    answer = "here";
-                }
-                else if(question.equalsIgnoreCase("person's passport is in a police station"))
-                {
-                    answer = "false";
-                }
-//              else if(question.equals("person's dob"))
-//              {
-//                  answer = "false";
-//              }
-//              else if(question.equals("the person was born in Australia"))
-//              {
-//                  answer = "false";
-//              }
-                else if(i< 3)
-                {
-                    answer = "true";
-                }
-                else
-                {
-                    answer = nameMap.get(question).getValue();
-                }
-                System.out.println("Answer: "+answer);
+                
+                Node nextQuestionNode = ie.GetNextQuestion(ass);
+                Dictionary<string, FactValueType> questionFvtMap = ie.FindTypeOfElementToBeAsked(nextQuestionNode);
 
-ie.feedAnswerToNode(nextQuestionNode, question, answer, questionFvtMap.get(question));
-                i++;
+                string answer;
+                
+                foreach(string question in ie.GetQuestionsFromNodeToBeAsked(nextQuestionNode))
+                {
+                    Console.WriteLine("questionFvt :"+questionFvtMap[question]);
+                    Console.WriteLine("Question: " + question+"?");
+
+                    if(question.Equals("person's name"))
+                    {
+                        answer = "John Smith";
+                    }
+                    else if(question.Equals("person's dob"))
+                    {
+                        answer = "11/12/1934";
+                    }
+                        else if(question.Equals("the person missed the flight"))
+                    {
+                        answer = "false";
+                    }
+                    else if(i == 0)
+                    {
+                        answer = "true";
+                    }
+                    else if(question.Equals("person passport type"))
+                    {
+                        answer = "Australian";
+                    }
+                    else if(question.ToLower().Equals("person passport issued country"))
+                    {
+                        answer = "Australia";
+                    }
+                    else if(question.ToLower().Equals("person age"))
+                    {
+                        answer = "19";
+                    }
+                    else if(question.ToLower().Equals("a number of countries the person has travelled so far"))
+                    {
+                        answer = "40";
+                    }
+                    else if(question.ToLower().Equals("current location of person's passport"))
+                    {
+                        answer = "there";
+                    }
+                    else if(question.ToLower().Equals("the place the person normally locate the passport"))
+                    {
+                        answer = "here";
+                    }
+                    else if(question.ToLower().Equals("person's passport is in a police station"))
+                    {
+                        answer = "false";
+                    }
+    //              else if(question.equals("person's dob"))
+    //              {
+    //                  answer = "false";
+    //              }
+    //              else if(question.equals("the person was born in Australia"))
+    //              {
+    //                  answer = "false";
+    //              }
+                    else if(i< 3)
+                    {
+                        answer = "true";
+                    }
+                    else
+                    {
+                        answer = nameMap[question].GetValue();
+                    }
+                    Console.WriteLine("Answer: "+answer);
+
+                    ie.FeedAnswerToNode(nextQuestionNode, question, FactValue.GenerateFactValue(questionFvtMap[question], answer), ass);
+                    i++;
+
+                    ie.GetAssessmentState().GetWorkingMemory().TryGetValue(isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName(), out goalRuleValue);
+                }
+
             }
 
-            
-        }
-
-        HashMap<String, FactValue> workingMemory = ie.getAssessmentState().getWorkingMemory();
-ie.getAssessmentState().getSummaryList().stream().forEachOrdered(node ->{
-    System.out.println(node + " : " + workingMemory.get(node).getValue().toString());
-}); 
+            Dictionary<string, FactValue> workingMemory = ie.GetAssessmentState().GetWorkingMemory();
+            ie.GetAssessmentState().GetSummaryList().ForEach(node =>{
+                Console.WriteLine(node + " : " + FactValue.GetValueInString(workingMemory[node].GetFactValueType(), workingMemory[node]));
+            }); 
     
         }
 
