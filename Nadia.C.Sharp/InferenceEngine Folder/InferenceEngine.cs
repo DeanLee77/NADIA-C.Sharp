@@ -398,7 +398,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     FactValue tempFv = ast.GetWorkingMemory()[nodeValueString];
                     if (tempFv.GetFactValueType().Equals(FactValueType.LIST))
                     {
-                        fvt = FactValueType.LIST;
+                        fvt = ((FactValue)((FactListValue)tempFv).GetValue()[0]).GetFactValueType();
                     }
                     else
                     {

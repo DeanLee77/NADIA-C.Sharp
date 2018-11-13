@@ -78,7 +78,7 @@ namespace Nadia.C.Sharp.NodeFolder
                 for (int i = 0; i < tempArrayLength; i++)
                 {
                     tempItem = tempArray[i];
-                    if (!string.IsNullOrEmpty(tempItem.Trim()) && workingMemory[tempItem.Trim()] != null)
+                    if (!string.IsNullOrEmpty(tempItem.Trim()) && (workingMemory.ContainsKey(tempItem.Trim())&&workingMemory[tempItem.Trim()] != null))
                     {
                         FactValue tempFv = workingMemory[tempItem.Trim()];
                         if (tempFv.GetFactValueType().Equals(FactValueType.DATE))

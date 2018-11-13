@@ -139,6 +139,12 @@
     <None Include="Testing Folder\Test1\testing NOT, KNOWN, Mandatory, Possibly, and Optionally inference.txt" />
     <None Include="Testing Folder\Test1\Testing ValueConclusionLine Comparison.txt" />
     <None Include="Testing Folder\Test1\Testing ValueConclusionLine with NOT, KNOW, IS, and IS IN LIST features.txt" />
+    <None Include="Testing Folder\Test1\Comparison for Testing full ValueConclusion and Comparison.txt" />
+    <None Include="Testing Folder\Test1\Testing full ValueConclusion and Comparison.txt" />
+    <None Include="Testing Folder\Test1\Comparison Testing for Whole features of ValueConclusionLine and ComparisonLine.txt" />
+    <None Include="Testing Folder\Test1\Testing for whole features of ValueConclusionLine and ComparisonLine.txt" />
+    <None Include="Testing Folder\Test1\Comparison for testing whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" />
+    <None Include="Testing Folder\Test1\Testing for whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

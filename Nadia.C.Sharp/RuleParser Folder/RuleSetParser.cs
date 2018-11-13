@@ -84,8 +84,8 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                      * following lines are to look for any nodes having a its nodeName with any operators due to the reason that
                                      * the node could be used to define a node previously used as a child node for other nodes
                                      */
-                                    possibleParentNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key=> Regex.Match(key, "(.+)?(\\s[<>=]+\\s?)?(" + variableName + ")(\\s[<>=]+)*(.(?!(IS)))*(.*(IS IN LIST).*)*").Success).ToList();
-                                    if (possibleParentNodeKeyList.Count != 0)
+                                    possibleParentNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key=> Regex.Match(key, "(.+)?(\\s[<>=]+\\s?)?(" + variableName + ")(\\s?[<>=]+)*(?!(.*(IS)))(.*(IS IN LIST).*)*").Success).ToList();
+                                    if (possibleParentNodeKeyList.Count != 0)                                          
                                     {
                                         possibleParentNodeKeyList.ForEach(item => {
                                             this.dependencyList.Add(new Dependency(nodeSet.GetNodeMap()[item], tempNode, DependencyType.GetOr())); //Dependency Type :OR
@@ -107,7 +107,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                  * the exprConclusion node could be used to define another node as a child node for other nodes if the variableName of exprConclusion node is mentioned somewhere else.
                                  * However, it is excluding nodes having 'IS' keyword because if it has the keyword then it should have child nodes to define the node otherwise the entire rule set has NOT been written in correct way
                                  */
-                                possibleParentNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "(.+)?(\\s[<>=]+\\s?)?(" + variableName + ")(\\s[<>=]+)*(.(?!(IS)))*(.*(IS IN LIST).*)*").Success).ToList();
+                                possibleParentNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "(.+)?(\\s[<>=]+\\s?)?(" + variableName + ")(\\s?[<>=]+)*(?!(.*(IS)))(.*(IS IN LIST).*)*").Success).ToList();
                                 if(possibleParentNodeKeyList.Count!= 0)
                                 {
                                     possibleParentNodeKeyList.ForEach(item => {
@@ -242,8 +242,8 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     data = new ValueConclusionLine(childText, tokens);
 
                                     tempNode = data;
-                                    possibleChildNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key=> Regex.Match(key, "(^" + tempNode.GetVariableName() + ")(.(IS(?!(\\sIN LIST))).*)*").Success).ToList();
-
+                                    possibleChildNodeKeyList = nodeSet.GetNodeMap().Keys.Where(key=> Regex.Match(key, "^(" + tempNode.GetVariableName() + ")(\\s+(IS(?!(\\s+IN\\s+LIST))).*)*$").Success).ToList();
+                                                                                                                      
                                     if (possibleChildNodeKeyList.Count != 0)
                                     {
                                         possibleChildNodeKeyList.ForEach(item => {
@@ -264,10 +264,10 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                     string lhsString = ((ComparisonLine)data).GetLHS();
                                     tempNode = data;
                                     possibleChildNodeKeyList = rhsType.Equals(FactValueType.STRING) ?
-                                                                nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "(^" + lhsString + ")(.(IS(?!(\\sIN LIST))).*)*").Success || Regex.Match(key, "(^" + rhsString + ")(.(IS(?!(\\sIN LIST))).*)*").Success).ToList()
-                                                                :
-                                                                nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key,"(^" + lhsString + ")(.(IS(?!(\\sIN LIST))).*)*").Success).ToList();
-
+                                                                nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "^(" + lhsString + ")(\\s+(IS(?!(\\s+IN\\s+LIST))).*)*$").Success || Regex.Match(key, "^(" + rhsString + ")(\\s+(IS(?!(\\s+IN\\s+LIST))).*)*$").Success).ToList()
+                                                                :                                                                                                                                           
+                                                                nodeSet.GetNodeMap().Keys.Where(key => Regex.Match(key, "^(" + lhsString + ")(\\s+(IS(?!(\\s+IN\\s+LIST))).*)*$").Success).ToList();
+                                                                                                                        
                                     if (possibleChildNodeKeyList.Count != 0)
                                     {
                                         possibleChildNodeKeyList.ForEach(item => {
