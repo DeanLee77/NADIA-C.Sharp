@@ -135,8 +135,8 @@ namespace Nadia.C.Sharp.NodeFolder
                 }
                 //          script = "new Date("+((FactDateValue)workingMemoryLhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryLhsValue).getValue().getDayOfMonth()+")"+operator+"new Date("+((FactDateValue)workingMemoryRhsValue).getValue().getYear()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getMonthValue()+"/"+((FactDateValue)workingMemoryRhsValue).getValue().getDayOfMonth()+");" ;
             }
-            else if (workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DECIMAL) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DOUBLE)
-                     || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.INTEGER) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.NUMBER))
+            else if (workingMemoryLhsValue != null && (workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DECIMAL) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DOUBLE)
+                      || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.INTEGER) || workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.NUMBER)))
             {
                 script = FactValue.GetValueInString(workingMemoryLhsValue.GetFactValueType(), workingMemoryLhsValue) + operatorString + FactValue.GetValueInString(workingMemoryRhsValue.GetFactValueType(), workingMemoryRhsValue);
             }

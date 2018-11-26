@@ -247,7 +247,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                                 ass.SetNodeToBeAsked(node);
                                 int indexOfRuleToBeAsked = i;
 
-                                return (node as IterateLine).GetIterateNextQuestion(this.nodeSet, this.ast);
+                                Node nextQuestionFromIterate = (node as IterateLine).GetIterateNextQuestion(this.nodeSet, this.ast);
+                                ass.SetAuxNodeToBeAsked(nextQuestionFromIterate);
+
+                                return nextQuestionFromIterate;
                             }
                         }                           
                     }
@@ -265,7 +268,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                         AddChildRuleIntoInclusiveList(node);
                     }
                }
-            }   
+            }
+
             return ass.GetNodeToBeAsked();
         }
     
@@ -679,6 +683,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
             else if (ass.GetNodeToBeAsked().GetLineType().Equals(LineType.ITERATE))
             {
+                targetNode = ass.GetAuxNodeToBeAsked();
+
                 ((IterateLine)ass.GetNodeToBeAsked()).IterateFeedAnswers(targetNode, questionName, nodeValue, this.nodeSet, ast, ass);
                 if (((IterateLine)ass.GetNodeToBeAsked()).CanBeSelfEvaluated(ast.GetWorkingMemory()))
                 {
