@@ -228,9 +228,10 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     }
 
                     if(nodeId != ass.GetGoalNode().GetNodeId() && node.GetLineType().Equals(LineType.ITERATE) && !ast.GetWorkingMemory().ContainsKey(node.GetNodeName()))
-                    {   
-                        FactValue givenListNameFv = this.ast.GetWorkingMemory()[(node as IterateLine).GetGivenListName()];
-                        String givenListName = "";
+                    {
+                        FactValue givenListNameFv;
+                        this.ast.GetWorkingMemory().TryGetValue((node as IterateLine).GetGivenListName(), out givenListNameFv);
+                        string givenListName = "";
                         if(givenListNameFv != null)
                         {
                             givenListName = givenListNameFv.ToString().Trim();

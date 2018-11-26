@@ -46,7 +46,7 @@ namespace Nadia.C.Sharp.NodeFolder
 
             thisNodeMap.Add(this.nodeName, this);
             thisNodeIdMap.Add(this.nodeId, this.nodeName);
-            Enumerable.Range(1, this.givenListSize + 1).ToList().ForEach((nth) =>
+            Enumerable.Range(1, this.givenListSize).ToList().ForEach((nth) =>
             {
                 parentDM.GetToChildDependencyList(this.nodeId).ForEach((item) =>
                 {
@@ -88,9 +88,13 @@ namespace Nadia.C.Sharp.NodeFolder
                     else // first question id
                     {
                         Node firstIterateQuestionNode = parentNodeSet.GetNodeByNodeId(parentNodeSet.GetDependencyMatrix().GetToChildDependencyList(this.GetNodeId()).Min());
-                        thisNodeMap.Add(firstIterateQuestionNode.GetNodeName(), firstIterateQuestionNode);
-                        thisNodeIdMap.Add(item, firstIterateQuestionNode.GetNodeName());
-                        tempDependencyList.Add(new Dependency(this, firstIterateQuestionNode, parentDM.GetDependencyType(this.nodeId, item)));
+                        if(!thisNodeMap.ContainsKey(firstIterateQuestionNode.GetNodeName()))
+                        {
+                            thisNodeMap.Add(firstIterateQuestionNode.GetNodeName(), firstIterateQuestionNode);
+                            thisNodeIdMap.Add(item, firstIterateQuestionNode.GetNodeName());
+                            tempDependencyList.Add(new Dependency(this, firstIterateQuestionNode, parentDM.GetDependencyType(this.nodeId, item)));
+                        }
+
                     }
                 });
             });
@@ -129,8 +133,9 @@ namespace Nadia.C.Sharp.NodeFolder
                 childDependencyList.ForEach((item) =>{
                     Node tempChildNode = parentNodeMap[parentNodeIdMap[item]];
                     LineType lt = tempChildNode.GetLineType();
-                    
-                    Node tempNode = thisNodeMap[nextNThInString+" "+this.GetVariableName()+" "+tempChildNode.GetNodeName()];
+
+                    Node tempNode;
+                    thisNodeMap.TryGetValue(nextNThInString + " " + this.GetVariableName() + " " + tempChildNode.GetNodeName(), out tempNode);
                     if(tempNode == null)
                     {
                         if(lt.Equals(LineType.VALUE_CONCLUSION))
@@ -140,7 +145,7 @@ namespace Nadia.C.Sharp.NodeFolder
                                 if(parentNodeMap[parentNodeIdMap[originalParentId]].GetLineType().Equals(LineType.EXPR_CONCLUSION))
                                 {
                                     ExprConclusionLine exprTempNode = thisNodeMap[thisNodeIdMap[modifiedParentId]] as ExprConclusionLine;
-                                string replacedString = FactValue.GetValueInString(exprTempNode.GetEquation().GetFactValueType(), exprTempNode.GetEquation()).Replace(tempChildNode.GetNodeName(), nextNThInString+" "+this.GetVariableName()+" "+tempChildNode.GetNodeName());
+                                    string replacedString = FactValue.GetValueInString(exprTempNode.GetEquation().GetFactValueType(), exprTempNode.GetEquation()).Replace(tempChildNode.GetNodeName(), nextNThInString+" "+this.GetVariableName()+" "+tempChildNode.GetNodeName());
                                     exprTempNode.SetValue(FactValue.Parse(replacedString));
                                     exprTempNode.SetEquation(FactValue.Parse(replacedString));
                                 }
@@ -172,12 +177,15 @@ namespace Nadia.C.Sharp.NodeFolder
                         }
                     }
                     
-                            
-                    thisNodeMap.Add(tempNode.GetNodeName(), tempNode);
-                    thisNodeIdMap.Add(tempNode.GetNodeId(), tempNode.GetNodeName());
-                    tempDependencyList.Add(new Dependency(thisNodeMap[thisNodeIdMap[modifiedParentId]], tempNode,parentDM.GetDependencyType(originalParentId, item)));
-                    
-                    CreateIterateNodeSetAux(parentDM, parentNodeMap, parentNodeIdMap, thisNodeMap, thisNodeIdMap, tempDependencyList, item, tempNode.GetNodeId(), nextNThInString);
+                    if(!thisNodeMap.ContainsKey(tempNode.GetNodeName()))
+                    {
+                        thisNodeMap.Add(tempNode.GetNodeName(), tempNode);
+                        thisNodeIdMap.Add(tempNode.GetNodeId(), tempNode.GetNodeName());
+                        tempDependencyList.Add(new Dependency(thisNodeMap[thisNodeIdMap[modifiedParentId]], tempNode, parentDM.GetDependencyType(originalParentId, item)));
+
+                        CreateIterateNodeSetAux(parentDM, parentNodeMap, parentNodeIdMap, thisNodeMap, thisNodeIdMap, tempDependencyList, item, tempNode.GetNodeId(), nextNThInString);
+                    }
+
                 });
             }       
         }
@@ -285,7 +293,7 @@ namespace Nadia.C.Sharp.NodeFolder
                 Node firstIterateQuestionNode = parentNodeSet.GetNodeByNodeId(parentNodeSet.GetDependencyMatrix().GetToChildDependencyList(this.GetNodeId()).Min());
                 if(questionName.Equals(firstIterateQuestionNode.GetNodeName()))
                 {
-                    this.givenListSize = Int32.Parse(nodeValue.ToString());
+                    this.givenListSize = Int32.Parse(FactValue.GetValueInString(nodeValue.GetFactValueType(), nodeValue));
                 }
                 this.iterateNodeSet = CreateIterateNodeSet(parentNodeSet);
                 this.iterateIE = new InferenceEngine(this.iterateNodeSet);
@@ -354,7 +362,7 @@ namespace Nadia.C.Sharp.NodeFolder
 
         public int FindNTh(Dictionary<string, FactValue> workingMemory)
         {
-            return Enumerable.Range(0, this.givenListSize + 1)
+            return Enumerable.Range(1, this.givenListSize)
                              .Where((item) => workingMemory[Oridinal(item) + " " + this.variableName] != null)
                              .ToList().Count;                            
         }
@@ -395,10 +403,11 @@ namespace Nadia.C.Sharp.NodeFolder
             bool canBeSelfEvaluated = false;
             if(this.iterateIE != null)
             {
+                FactValue outFactValue = null;
                 List<int> numberOfDeterminedSecondLevelNode = this.iterateIE.GetNodeSet().GetDependencyMatrix().GetToChildDependencyList(this.nodeId)
-                                                                   .Where((i) => i != this.nodeId + 1)
-                                                                    .Where((id) => workingMemory[this.iterateIE.GetNodeSet().GetNodeIdMap()[id]] != null && FactValue.GetValueInString(workingMemory[this.iterateIE.GetNodeSet().GetNodeIdMap()[id]].GetFactValueType(), workingMemory[this.iterateIE.GetNodeSet().GetNodeIdMap()[id]]) != null)
-                                                                    .ToList();
+                                                                  .Where((i) => i != this.nodeId + 1)
+                                                                  .Where((id) => workingMemory.TryGetValue(this.iterateIE.GetNodeSet().GetNodeIdMap()[id], out outFactValue) && outFactValue != null && FactValue.GetValueInString(outFactValue.GetFactValueType(), outFactValue) != null)
+                                                                  .ToList();
                             
 
 

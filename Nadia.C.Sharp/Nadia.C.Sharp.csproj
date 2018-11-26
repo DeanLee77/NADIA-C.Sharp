@@ -145,6 +145,8 @@
     <None Include="Testing Folder\Test1\Testing for whole features of ValueConclusionLine and ComparisonLine.txt" />
     <None Include="Testing Folder\Test1\Comparison for testing whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" />
     <None Include="Testing Folder\Test1\Testing for whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" />
+    <None Include="Testing Folder\Test1\Comparison Testing for ALL Node Lines and features.txt" />
+    <None Include="Testing Folder\Test1\Testing for ALL Node Lines and features.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

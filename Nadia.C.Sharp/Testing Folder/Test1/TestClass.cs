@@ -15,6 +15,424 @@ namespace Nadia.C.Sharp
 {
     public class TestClass
     {
+        public static void Testing_for_ALL_Node_Lines_and_features_10()
+        {
+            string filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+            filePath = Directory.GetParent(Directory.GetParent(filePath).FullName).FullName;
+            string newFilePath = filePath + @"/Testing Folder/Test1/Testing for ALL Node Lines and features.txt";
+
+            RuleSetReader ilr = new RuleSetReader();
+            ilr.SetFileSource(newFilePath);
+            RuleSetParser isf = new RuleSetParser();
+            RuleSetScanner rsc = new RuleSetScanner(ilr, isf);
+            rsc.ScanRuleSet();
+            rsc.EstablishNodeSet(null);
+
+            StreamReader streamReader = new StreamReader(filePath + @"/Testing Folder/Test1/Comparison Testing for ALL Node Lines and features.txt");
+            string line;
+            List<string> nodeListMock = new List<string>();
+            string[] tempArray;
+            Dictionary<string, NodeObject_For_Inference_Test> nameMap = new Dictionary<string, NodeObject_For_Inference_Test>();
+
+
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                tempArray = Regex.Split(line, "&");
+                nodeListMock.Add(tempArray[0].Trim());
+                if(line.Length != 0)
+                {
+                    NodeObject_For_Inference_Test nfit = new NodeObject_For_Inference_Test(tempArray[0].Trim(), Regex.Split(tempArray[1].Trim(), ":"));
+                    nameMap.Add(tempArray[0].Trim(), nfit);
+                }
+
+            }
+            streamReader.Close();
+
+            List<int> comparisonTempList = new List<int>();
+            Enumerable.Range(0, nodeListMock.Count).ToList().ForEach(t => {
+                string mockNode = nodeListMock[t];
+                Node actualNode = isf.GetNodeSet().GetNodeSortedList()[t];
+                if (actualNode.GetNodeName().Equals("person's nationality IS \"Australian\"")
+                    && mockNode.Equals(actualNode.GetNodeName())
+                    && actualNode.GetVariableName().Equals("person's nationality")
+                    && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                    && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("Australian"))
+                {
+                    comparisonTempList.Add(t);
+
+                }
+                else if (actualNode.GetNodeName().Equals("person's name = \"troy jones\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's name")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("troy jones"))
+                {
+                    comparisonTempList.Add(t);
+
+                }
+                else if (actualNode.GetNodeName().Equals("person's dob > 01/01/1990")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person's dob")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DATE)
+                         && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("1990/01/01"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's name IS IN LIST: name list")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's name")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("name list"))
+
+                {
+                    comparisonTempList.Add(t);
+
+                }
+                else if (actualNode.GetNodeName().Equals("person passport type = \"Australian\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person passport type")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("Australian"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person passport issued country = \"Australian\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person passport issued country")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("Australian"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person age >18")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person age")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.INTEGER)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("18"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("a number of countries the person has travelled so far >= 40")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("a number of countries the person has travelled so far")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.INTEGER)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("40"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("current location of person's passport = the place the person normally locate the passport")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("current location of person's passport")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("the place the person normally locate the passport"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's citizenship status = \"canceled\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person's citizenship status")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("canceled"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's legally yearly period of stay in Australia <= 20")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person's legally yearly period of stay in Australia")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.INTEGER)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("20"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's permanent residentship status = \"canceled\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person's permanent residentship status")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("canceled"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's drinking habit = \"frequent drinker\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && ((ComparisonLine)actualNode).GetLHS().Equals("person's drinking habit")
+                        && ((ComparisonLine)actualNode).GetRHS().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(((ComparisonLine)actualNode).GetRHS().GetFactValueType(), ((ComparisonLine)actualNode).GetRHS()).Equals("frequent drinker"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's account IS IN LIST: premium account type")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's account")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("premium account type"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"social drinker\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's drinking habit")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("social drinker"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"frequent drinker\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's drinking habit")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("frequent drinker"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"heavy drinker\"")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("person's drinking habit")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DEFI_STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("heavy drinker"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("number of drinks the person consumes a week IS CALC ( number of drinks the person consumes an hour * hours of drinks a day * (5-1))")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetVariableName().Equals("number of drinks the person consumes a week")
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.STRING)
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("( number of drinks the person consumes an hour * hours of drinks a day * (5-1))"))
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("ALL service ITERATE: LIST OF service history")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetLineType().Equals(LineType.ITERATE)
+                        && ((IterateLine)actualNode).GetNumberOfTarget().Equals("ALL")
+                        && ((IterateLine)actualNode).GetGivenListName().Equals("service history")
+                        && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals(FactValueType.STRING)
+                        )
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("enlistment date >= 01/07/1951")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetLineType().Equals(LineType.COMPARISON)
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DATE)
+                        )
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("discharge date <= 6/12/1972")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetLineType().Equals(LineType.COMPARISON)
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DATE)
+                        )
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (actualNode.GetNodeName().Equals("service type IS IN LIST: Special service")
+                        && mockNode.Equals(actualNode.GetNodeName())
+                        && actualNode.GetLineType().Equals(LineType.VALUE_CONCLUSION)
+                        && actualNode.GetFactValue().GetFactValueType().Equals(FactValueType.DATE)
+                        )
+                {
+                    comparisonTempList.Add(t);
+                }
+                else if (mockNode.Equals(actualNode.GetNodeName()))
+                {
+                    comparisonTempList.Add(t);
+                }
+            });
+
+            if(comparisonTempList.Count ==  nodeListMock.Count)
+            {
+                Console.WriteLine("Node side has been tested and passed");
+            }
+        
+            InferenceEngine ie = new InferenceEngine(isf.GetNodeSet());
+            Assessment ass = new Assessment(isf.GetNodeSet(), isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName());
+            int i = 0;
+
+            FactValue goalRuleValue = null;
+            ie.GetAssessmentState().GetWorkingMemory().TryGetValue(isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName(), out goalRuleValue);
+
+            while (goalRuleValue == null || !ie.GetAssessmentState().AllMandatoryNodeDetermined())
+            {
+
+                Node nextQuestionNode = ie.GetNextQuestion(ass);
+                Dictionary<string, FactValueType> questionFvtMap = ie.FindTypeOfElementToBeAsked(nextQuestionNode);
+
+    //          FactValueType fvt = null;
+                string answer = "";
+            
+                foreach(string question in ie.GetQuestionsFromNodeToBeAsked(nextQuestionNode))
+                {
+                    Console.WriteLine("questionFvt :"+questionFvtMap[question]);
+                    Console.WriteLine("Question: " + question+"?");
+                
+                    if(question.Equals("1st service discharge type"))
+                    {
+                        answer = "Medical";
+                    }
+                    else if(question.Equals("2nd service discharge type"))
+                    {
+                        answer = "Dishonor";
+                    }
+                    else if(question.Equals("3rd service discharge type"))
+                    {
+                        answer = "Voluntary";
+                    }
+                    else if(question.Equals("3rd service service type"))
+                    {
+                        answer = "Turongga";
+                    }
+                    else if(question.Equals("2nd service service type"))
+                    {
+                        answer = "Angular force";
+                    }
+                    else if(question.Equals("1st service service type"))
+                    {
+                        answer = "SAP";
+                    }
+                    else if(question.Equals("3rd service discharge date"))
+                    {
+                        answer = "05/12/1993";
+                    }
+                    else if(question.Equals("2nd service discharge date"))
+                    {
+                        answer = "05/12/2003";
+                    }
+                    else if(question.Equals("1st service discharge date"))
+                    {
+                        answer = "05/12/1970";
+                    }
+                    else if(question.Equals("3rd service enlistment date"))
+                    {
+                        answer = "02/07/1995";
+                    }
+                    else if(question.Equals("2nd service enlistment date"))
+                    {
+                        answer = "02/07/1995";
+                    }
+                    else if(question.Equals("1st service enlistment date"))
+                    {
+                        answer = "2/07/1955";
+                    }
+                    else if(question.Equals("number of services"))
+                    {
+                        answer = "3";
+                    }
+                    else if(question.Equals("person's name"))
+                    {
+                        answer = "John Smith";
+                    }
+                    else if(question.Equals("one of person's parents is Australian"))
+                    {
+                        answer = "true";
+                    }
+                    else if(question.Equals("person's dob"))
+                    {
+                        answer = "11/12/1994";
+                    }
+                    else if(question.Equals("the person missed the flight"))
+                    {
+                        answer = "false";
+                    }
+                    else if(question.Equals("number of drinks the person consumes an hour"))
+                    {
+                        answer = "10";
+                    }
+                    else if(question.Equals("hours of drinks a day"))
+                    {
+                        answer = "9";
+                    }
+                    else if(question.Equals("person's account"))
+                    {
+                        answer = "HAHAHOHO";
+                    }
+                    else if(i == 0)
+                    {
+                        answer = "true";
+                    }
+                    else if(question.Equals("person passport type"))
+                    {
+                        answer = "Australian";
+                    }
+                    else if(question.ToLower().Equals("person passport issued country"))
+                    {
+                        answer = "Australia";
+                    }
+                    else if(question.ToLower().Equals("person age"))
+                    {
+                        answer = "18";
+                    }
+                    else if(question.ToLower().Equals("a number of countries the person has travelled so far"))
+                    {
+                        answer = "40";
+                    }
+                    else if(question.ToLower().Equals("current location of person's passport"))
+                    {
+                        answer = "there";
+                    }
+                    else if(question.ToLower().Equals("the place the person normally locate the passport"))
+                    {
+                        answer = "here";
+                    }
+                    else if(question.ToLower().Equals("person's passport is in a police station"))
+                    {
+                        answer = "false";
+                    }
+                    else if(question.ToLower().Equals("person's citizenship status"))
+                    {
+                        answer = "canceled";
+                    }
+                    else if(question.ToLower().Equals("person's legally yearly period of stay in australia"))
+                    {
+                        answer = "19";
+                    }
+                    else if(question.ToLower().Equals("person's permanent residentship status"))
+                    {
+                        answer = "resident";
+                    }
+    //              else if(question.Equals("person's dob"))
+    //              {
+    //                  answer = "false";
+    //              }
+                    else if(question.Equals("the person was born in Australia"))
+                    {
+                        answer = "true";
+                    }
+                    else if(i< 3)
+                    {
+                        answer = "true";
+                    }
+                    else
+                    {
+                        answer = nameMap[question].GetValue();
+                    }
+                    Console.WriteLine("Answer: "+answer);
+
+                    ie.FeedAnswerToNode(nextQuestionNode, question, FactValue.GenerateFactValue(questionFvtMap[question], answer), ass);
+                    i++;
+
+                    ie.GetAssessmentState().GetWorkingMemory().TryGetValue(isf.GetNodeSet().GetNodeSortedList()[0].GetNodeName(), out goalRuleValue);
+
+                }
+
+            }
+
+            Dictionary<string, FactValue> workingMemory = ie.GetAssessmentState().GetWorkingMemory();
+
+
+            ie.GenerateSortedSummaryList().ForEach(node =>{
+                if (workingMemory[node].GetFactValueType().Equals(FactValueType.LIST))
+                {
+                    ((FactListValue)workingMemory[node]).GetValue().ForEach(item => Console.WriteLine("List Value - " + node + " : " + item));
+                }
+                {
+                    Console.WriteLine(node + " : " + FactValue.GetValueInString(workingMemory[node].GetFactValueType(), workingMemory[node]));
+                }
+            }); 
+    
+        }
+
+
         public static void Testing_Whole_Features_Of_ValueConclusionLine_ComparisonLine_and_ExprConclusionLine_9()
         {
 
@@ -161,7 +579,7 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("frequent drinker"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (actualNode.GetNodeName().Equals("person's account IS IN LIST: premium account type")
                         && mockNode.Equals(actualNode.GetNodeName())
                         && actualNode.GetVariableName().Equals("person's account")
@@ -169,7 +587,7 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("premium account type"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"social drinker\"")
                         && mockNode.Equals(actualNode.GetNodeName())
                         && actualNode.GetVariableName().Equals("person's drinking habit")
@@ -177,7 +595,7 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("social drinker"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"frequent drinker\"")
                         && mockNode.Equals(actualNode.GetNodeName())
                         && actualNode.GetVariableName().Equals("person's drinking habit")
@@ -185,7 +603,7 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("frequent drinker"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (actualNode.GetNodeName().Equals("person's drinking habit IS \"heavy drinker\"")
                         && mockNode.Equals(actualNode.GetNodeName())
                         && actualNode.GetVariableName().Equals("person's drinking habit")
@@ -193,7 +611,7 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("heavy drinker"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (actualNode.GetNodeName().Equals("number of drinks the person consumes a week IS CALC ( number of drinks the person consumes an hour * hours of drinks a day * (5-1))")
                         && mockNode.Equals(actualNode.GetNodeName())
                         && actualNode.GetVariableName().Equals("number of drinks the person consumes a week")
@@ -201,11 +619,11 @@ namespace Nadia.C.Sharp
                         && FactValue.GetValueInString(actualNode.GetFactValue().GetFactValueType(), actualNode.GetFactValue()).Equals("( number of drinks the person consumes an hour * hours of drinks a day * (5-1))"))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
                 else if (mockNode.Equals(actualNode.GetNodeName()))
                 {
                     comparisonTempList.Add(t);
-            }
+                }
             });
 
             if(comparisonTempList.Count ==  nodeListMock.Count)
@@ -305,7 +723,7 @@ namespace Nadia.C.Sharp
                     {
                         answer = "resident";
                     }
-    //              else if(question.equals("person's dob"))
+    //              else if(question.Equals("person's dob"))
     //              {
     //                  answer = "false";
     //              }
@@ -555,11 +973,11 @@ namespace Nadia.C.Sharp
                     {
                         answer = "resident";
                     }
-    //              else if(question.equals("person's dob"))
+    //              else if(question.Equals("person's dob"))
     //              {
     //                  answer = "false";
     //              }
-    //              else if(question.equals("the person was born in Australia"))
+    //              else if(question.Equals("the person was born in Australia"))
     //              {
     //                  answer = "false";
     //              }
@@ -760,11 +1178,11 @@ namespace Nadia.C.Sharp
                     {
                         answer = "false";
                     }
-    //              else if(question.equals("person's dob"))
+    //              else if(question.Equals("person's dob"))
     //              {
     //                  answer = "false";
     //              }
-    //              else if(question.equals("the person was born in Australia"))
+    //              else if(question.Equals("the person was born in Australia"))
     //              {
     //                  answer = "false";
     //              }
@@ -894,11 +1312,11 @@ namespace Nadia.C.Sharp
                     {
                         answer = "true";
                     }
-    //              else if(question.equals("person's dob"))
+    //              else if(question.Equals("person's dob"))
     //              {
     //                  answer = "false";
     //              }
-    //              else if(question.equals("the person was born in Australia"))
+    //              else if(question.Equals("the person was born in Australia"))
     //              {
     //                  answer = "false";
     //              }

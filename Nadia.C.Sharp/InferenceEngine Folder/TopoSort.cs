@@ -208,8 +208,9 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 int nodeId = node.GetNodeId();
 
                 List<int> childIdList = new List<int>();
-                Enumerable.Range(0, copyOfDependencyMatrix.Length / 2).ToList().ForEach((i) =>
+                Enumerable.Range(0, copyOfDependencyMatrix.GetLength(1)).ToList().ForEach((i) =>
                 {
+                   
                     if (copyOfDependencyMatrix[nodeId, i] != 0)
                     {
                         childIdList.Add(i);

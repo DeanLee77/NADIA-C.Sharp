@@ -152,7 +152,7 @@ namespace Nadia.C.Sharp.NodeFolder
             FactValue fv = null;
             if (workingMemoryRhsValue != null && workingMemoryLhsValue != null)
             {
-                result = Convert.ToBoolean(jint.Execute(script).GetCompletionValue().ToString());
+                 result = Convert.ToBoolean(jint.Execute(script).GetCompletionValue().ToString());
                 fv = FactValue.Parse(result);
             }
 

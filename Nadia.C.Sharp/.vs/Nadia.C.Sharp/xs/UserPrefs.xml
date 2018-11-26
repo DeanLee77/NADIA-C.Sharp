@@ -1,14 +1,22 @@
 ﻿<Properties StartupConfiguration="{E5A172D3-CE33-4031-84EA-35835913261E}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Testing Folder/Test1/TestClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Node Folder/IterateLine.cs">
     <Files>
-      <File FileName="Program.cs" Line="19" Column="45" />
-      <File FileName="Testing Folder/Test1/TestClass.cs" Line="54" Column="44" />
+      <File FileName="Program.cs" Line="19" Column="68" />
+      <File FileName="Testing Folder/Test1/TestClass.cs" Line="411" Column="1" />
       <File FileName="RuleParser Folder/RuleSetScanner.cs" Line="98" Column="41" />
       <File FileName="RuleParser Folder/RuleSetParser.cs" Line="390" Column="1" />
       <File FileName="Testing Folder/Test1/Testing for whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" Line="1" Column="1" />
       <File FileName="Node Folder/DependencyType.cs" Line="1" Column="1" />
       <File FileName="Testing Folder/Test1/Comparison for testing whole features of ValueConclusionLine, ComparisonLine and ExprConclusionLine.txt" Line="7" Column="47" />
-      <File FileName="InferenceEngine Folder/TopoSort.cs" Line="1" Column="1" />
+      <File FileName="InferenceEngine Folder/TopoSort.cs" Line="211" Column="71" />
+      <File FileName="RuleParser Folder/RuleSetReader.cs" Line="15" Column="1" />
+      <File FileName="InferenceEngine Folder/InferenceEngine.cs" Line="682" Column="1" />
+      <File FileName="FactValue Folder/FactValue.cs" Line="180" Column="1" />
+      <File FileName="Node Folder/IterateLine.cs" Line="87" Column="1" />
+      <File FileName="InferenceEngine Folder/Assessment.cs" Line="58" Column="1" />
+      <File FileName="Node Folder/DependencyMatrix.cs" Line="48" Column="1" />
+      <File FileName="Node Folder/NodeSet.cs" Line="33" Column="1" />
+      <File FileName="Node Folder/Node.cs" Line="50" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
@@ -16,11 +24,12 @@
     <BreakpointStore>
       <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/Main.cs" relfile="Testing Folder/Test1/Main.cs" line="10" column="21" />
       <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/RuleParser Folder/RuleSetScanner.cs" relfile="RuleParser Folder/RuleSetScanner.cs" line="118" column="1" />
-      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs" relfile="InferenceEngine Folder/TopoSort.cs" line="198" column="45" />
       <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs" relfile="InferenceEngine Folder/TopoSort.cs" line="319" column="1" />
-      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="211" column="1" />
-      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="52" column="1" />
-      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="56" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Node Folder/IterateLine.cs" relfile="Node Folder/IterateLine.cs" line="247" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="319" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" relfile="Testing Folder/Test1/TestClass.cs" line="291" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Node Folder/IterateLine.cs" relfile="Node Folder/IterateLine.cs" line="353" column="1" />
+      <Breakpoint file="/Users/deanlee/Desktop/Development/Programming/C#/Nadia.C.Sharp/Nadia.C.Sharp/Node Folder/IterateLine.cs" relfile="Node Folder/IterateLine.cs" line="83" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
@@ -31,6 +40,10 @@
     <Watch file="../../../RuleParser Folder/RuleSetParser.cs" line="395" offsetX="1089" offsetY="5910" expression="dpList" liveUpdate="False" />
     <Watch file="../../../RuleParser Folder/RuleSetParser.cs" line="395" offsetX="1089" offsetY="5910" expression="dpList" liveUpdate="False" />
     <Watch file="../../../Testing Folder/Test1/TestClass.cs" line="55" offsetX="677" offsetY="890" expression="isf.nodeSet.sortedNodeList" liveUpdate="False" />
+    <Watch file="../../../Node Folder/IterateLine.cs" line="135" offsetX="398" offsetY="2144" expression="tempNode" liveUpdate="False" />
+    <Watch file="../../../InferenceEngine Folder/InferenceEngine.cs" line="230" offsetX="1431" offsetY="3664" expression="node.GetLineType()" liveUpdate="False" />
+    <Watch file="../../../InferenceEngine Folder/InferenceEngine.cs" line="200" offsetX="589" offsetY="3184" expression="node" liveUpdate="False" />
+    <Watch file="../../../InferenceEngine Folder/InferenceEngine.cs" line="200" offsetX="589" offsetY="3210" expression="node.nodeName" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.ItemProperties.Nadia.C.Sharp PreferredExecutionTarget="MonoDevelop.Default" />

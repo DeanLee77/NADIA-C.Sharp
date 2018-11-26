@@ -87,8 +87,8 @@ namespace Nadia.C.Sharp.NodeFolder
                              * below line is temporary solution.
                              * Within next iteration it needs to be that this node should take dateFormatter for its constructor to determine which date format it needs
                              */
-                            string tempStr = DateTime.ParseExact(FactValue.GetValueInString(tempFv.GetFactValueType(),tempFv), dateFormatter, CultureInfo.InvariantCulture).ToString();
-                            tempScript = tempScript.Replace(tempScript.Trim(), tempStr);
+                            string tempStr = DateTime.ParseExact(FactValue.GetValueInString(tempFv.GetFactValueType(),tempFv), dateFormatter, CultureInfo.InvariantCulture).ToString().Split(' ')[0].Trim();
+                            tempScript = tempScript.Replace(tempItem.Trim(), tempStr);
                         }
                         else
                         {

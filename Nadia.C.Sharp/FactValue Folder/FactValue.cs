@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Nadia.C.Sharp.RuleParserFolder;
 
@@ -133,7 +135,22 @@ namespace Nadia.C.Sharp.FactValueFolder
                     break;
                 case FactValueType.DATE:
                     DateTime dateValue;
-                    DateTime.TryParseExact(str, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dateValue);
+
+                    string[] strArray = str.Trim().Split('/');
+                    StringBuilder sb = new StringBuilder();
+
+                    Enumerable.Range(0, strArray.Length)
+                              .ToList()
+                              .ForEach(x =>
+                              {
+                                  sb.Append(strArray[x].PadLeft(2, '0'));
+                                  if (x != strArray.Length - 1)
+                                  {
+                                      sb.Append("/");
+                                  }
+                              });
+
+                    DateTime.TryParseExact(sb.ToString(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dateValue);
 
                     factValue = Parse(dateValue);
                     break;
@@ -172,12 +189,26 @@ namespace Nadia.C.Sharp.FactValueFolder
                     value = ((FactBooleanValue)factValue).GetValue().ToString();
                     break;
                 case FactValueType.DATE:
-                    value = ((FactDateValue)factValue).GetValue().ToString();
+                    string[] strArray = ((FactDateValue)factValue).GetValue().ToString().Trim().Split('/');
+                    StringBuilder sb = new StringBuilder();
+
+                    Enumerable.Range(0, strArray.Length)
+                              .ToList()
+                              .ForEach(x =>
+                              {
+                                  sb.Append(strArray[x].Trim().PadLeft(2, '0'));
+                                  if (x != strArray.Length - 1)
+                                  {
+                                      sb.Append("/");
+                                  }
+                              });
+                    value = sb.ToString().Split(' ')[0].Trim();
                     break;
                 case FactValueType.DEFI_STRING:
                     value = ((FactDefiStringValue)factValue).GetValue();
                     break;
                 case FactValueType.DOUBLE:
+                case FactValueType.DECIMAL:
                     value = ((FactDoubleValue)factValue).GetValue().ToString();
                     break;
                 case FactValueType.HASH:

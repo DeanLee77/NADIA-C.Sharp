@@ -16,9 +16,9 @@ namespace Nadia.C.Sharp
         static void Main(string[] args)
         {
 
-        
-           
-            TestClass.Testing_Whole_Features_Of_ValueConclusionLine_ComparisonLine_and_ExprConclusionLine_9();
+            TestClass.Testing_for_ALL_Node_Lines_and_features_10();
+
+            //TestClass.Testing_Whole_Features_Of_ValueConclusionLine_ComparisonLine_and_ExprConclusionLine_9();
 
             //TestClass.Testing_Whole_Features_Of_ValueConclusionLIne_and_ComparisonLine_8();
             //TestClass.Tesing_Full_ValueConclusion_Comparison_7();
