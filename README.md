@@ -1,7 +1,7 @@
 # NADIA.NET Rule/Inference Engine
 Open source project Nadia Rule/Policy Engine with React.js and Spring.
 This project is based on original project [Nadia Rule/Inference Engine.](https://github.com/DeanLee77/Nadia).
-As this project is titled, this project is written in C#(.NET) nevertheless the orgin project was written in Java.
+As this project is titled, this project is written in C#(.NET).
 
 There is another project written in Java with React.JS, and can be found in [Nadia-R.S Rule/Inference Engine](https://github.com/NExST-RnDLabs/NadiaRS). React.JS and PostgreSQL will also be used for front-end and database respectively.
 <br/>
@@ -9,6 +9,10 @@ There is another project written in Java with React.JS, and can be found in [Nad
 Video is also avaiable at [NADIA Policy / Business rules Engine from NExST.R&DLabs](https://youtu.be/xyWjscJ3LxI) <br/>
 or <br/>
 another link is [ Introduction of NADIA Policy / Business rules Engine from NExST.R&DLabs.](https://youtu.be/O-itMgYHRvc)
+
+# ***Relevant NADIA project list***
+[NADIA Java](https://github.com/DeanLee77/Nadia)<br/>
+[NADIA Java REST](https://github.com/NExST-RnDLabs/NadiaRS) 
 
 ## 1. Introduction
 This project is building a Rules(Policies)/Inference Engine with ease of use and maintain rules/policies. It aims to be:
@@ -19,7 +23,7 @@ This project is building a Rules(Policies)/Inference Engine with ease of use and
 
 ## 2. Installation/Running Project in Local
 In order to install the project in your workspace, you may need to do followings;
- 1. Install visual studio (visual studio code);
+ 1. Install visual studio (or visual studio code);
  2. Install PostgreSQL, and set your database name and password.;
  
  *Please note that there will be Demo video available soon.
