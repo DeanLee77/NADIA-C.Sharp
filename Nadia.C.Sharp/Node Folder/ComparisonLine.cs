@@ -111,7 +111,7 @@ namespace Nadia.C.Sharp.NodeFolder
             /*
              * if it is about date comparison then string of 'script' needs rewriting
              */
-            if ((workingMemoryLhsValue != null && workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DATE)) || (workingMemoryRhsValue != null && workingMemoryRhsValue.GetType().Equals(FactValueType.DATE)))
+            if ((workingMemoryLhsValue != null && workingMemoryLhsValue.GetFactValueType().Equals(FactValueType.DATE)) || (workingMemoryRhsValue != null && workingMemoryRhsValue.GetFactValueType().Equals(FactValueType.DATE)))
             {
                 Boolean returnValue;
                 switch (this.operatorString)
