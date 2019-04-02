@@ -3,7 +3,7 @@ Open source project Nadia Rule/Policy Engine with React.js and Spring.
 This project is based on original project [Nadia Rule/Inference Engine.](https://github.com/DeanLee77/Nadia).
 As this project is titled, this project is written in C#(.NET).
 
-There is another project written in Java with React.JS, and can be found in [Nadia-R.S Rule/Inference Engine](https://github.com/NExST-RnDLabs/NadiaRS). React.JS and PostgreSQL will also be used for front-end and database respectively.
+There is another project written in Java with React.JS, and can be found in [Nadia-R.S Rule/Inference Engine](https://github.com/NExST-RnDLabs/NadiaRS).
 <br/>
 <br/>
 Video is also avaiable at [NADIA Policy / Business rules Engine from NExST.R&DLabs](https://youtu.be/xyWjscJ3LxI) <br/>
@@ -12,7 +12,8 @@ another link is [ Introduction of NADIA Policy / Business rules Engine from NExS
 
 # ***Relevant NADIA project list***
 [NADIA Java](https://github.com/DeanLee77/Nadia)<br/>
-[NADIA Java REST](https://github.com/NExST-RnDLabs/NadiaRS) 
+[NADIA Java REST](https://github.com/NExST-RnDLabs/NadiaRS)<br/>
+[NADIA Python](https://github.com/DeanLee77/NADIA-Python/)
 
 ## 1. Introduction
 This project is building a Rules(Policies)/Inference Engine with ease of use and maintain rules/policies. It aims to be:
