@@ -68,7 +68,7 @@ namespace Nadia.C.Sharp.NodeFolder
                             FactValue tempNodeFv = ((ComparisonLine)tempNode).GetRHS();
                             if (tempNodeFv.GetFactValueType().Equals(FactValueType.STRING))
                             {
-                                FactValue tempFv = FactValue.Parse(nextNThInString + " " + this.GetVariableName() + " " + tempNodeFv);
+                                FactValue tempFv = FactValue.Parse(nextNThInString + " " + this.GetVariableName() + " " + FactValue.GetValueInString(FactValueType.STRING, tempNodeFv));
                                 tempNode.SetValue(tempFv);
                             }
                         }

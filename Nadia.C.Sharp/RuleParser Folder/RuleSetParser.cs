@@ -219,8 +219,6 @@ namespace Nadia.C.Sharp.RuleParserFolder
 
                 if (data == null)
                 {
-                    //              valueConclusionMatcher =Pattern.compile("(^U)([LMU(Da)(No)(De)(Ha)(Url)(Id)]+$)"); // child statement for ValueConclusionLine starts with AND(OR), AND MANDATORY(OPTIONALLY, POSSIBLY) or AND (MANDATORY) (NOT) KNOWN
-
                     Regex[] matchPatterns = { VALUE_MATCHER, COMPARISON_MATCHER, ITERATE_MATCHER, EXPRESSION_CONCLUSION_MATCHER, WARNING_MATCHER };
                     Node tempNode;
                     List<string> possibleChildNodeKeyList;
@@ -280,7 +278,7 @@ namespace Nadia.C.Sharp.RuleParserFolder
                                         HandleWarning(parentText);
                                     }
                                     break;
-                                case 2:  // comparisonMatcher case
+                                case 2:  // iteratenMatcher case
                                     data = new IterateLine(childText, tokens);
                                     if (FactValue.GetValueInString(data.GetFactValue().GetFactValueType(), data.GetFactValue()).Equals("WARNING"))
                                     {
