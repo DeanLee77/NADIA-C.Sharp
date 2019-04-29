@@ -270,7 +270,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                }
             }
 
-            return ass.GetNodeToBeAsked();
+            Node nextQuestionNode = ass.GetNodeToBeAsked();
+            if (nextQuestionNode.GetLineType().Equals(LineType.ITERATE))
+            {
+                ass.SetAuxNodeToBeAsked(nextQuestionNode);
+            }
+
+            return nextQuestionNode;
+
+
         }
     
     
@@ -748,7 +756,9 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                         }
                         else if (lineType.Equals(LineType.COMPARISON)
                                 && ast.GetWorkingMemory().ContainsKey(((ComparisonLine)tempNode).GetLHS())
-                                 && ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(((ComparisonLine)tempNode).GetRHS().GetFactValueType(), ((ComparisonLine)tempNode).GetRHS())))
+                                && (((ComparisonLine)tempNode).GetRHS().GetFactValueType().Equals(FactValueType.STRING) ? 
+                                    ast.GetWorkingMemory().ContainsKey(FactValue.GetValueInString(((ComparisonLine)tempNode).GetRHS().GetFactValueType(), ((ComparisonLine)tempNode).GetRHS()))
+                                     : true))
                         {
                             FactValue fv = tempNode.SelfEvaluate(ast.GetWorkingMemory(), scriptEngine);
 
