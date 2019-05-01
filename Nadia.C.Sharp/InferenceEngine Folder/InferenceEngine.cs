@@ -106,14 +106,17 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
         {
             List<string> variableNameList = new List<string>();
             nodeSet.GetNodeMap().Values.ToList().ForEach(node => {
-                variableNameList.Add(node.GetVariableName());
-                FactValueType nodeFactValueType = node.GetFactValue().GetFactValueType();
-                if (nodeFactValueType.Equals(FactValueType.BOOLEAN) || nodeFactValueType.Equals(FactValueType.STRING))
+                if (nodeSet.GetDependencyMatrix().GetToChildDependencyList(node.GetNodeId()).Count == 0)
                 {
-                    variableNameList.Add(FactValue.GetValueInString(node.GetFactValue().GetFactValueType(),node.GetFactValue()));
+                    variableNameList.Add(node.GetVariableName());
+                    FactValueType nodeFactValueType = node.GetFactValue().GetFactValueType();
+
+                    if (nodeFactValueType.Equals(FactValueType.STRING) || nodeFactValueType.Equals(FactValueType.TEXT))
+                    {
+                        variableNameList.Add(FactValue.GetValueInString(node.GetFactValue().GetFactValueType(), node.GetFactValue()));
+                    }
                 }
             });
-
 
             return variableNameList;
         }
@@ -271,7 +274,7 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             }
 
             Node nextQuestionNode = ass.GetNodeToBeAsked();
-            if (nextQuestionNode.GetLineType().Equals(LineType.ITERATE))
+            if (nextQuestionNode!= null && nextQuestionNode.GetLineType().Equals(LineType.ITERATE))
             {
                 ass.SetAuxNodeToBeAsked(nextQuestionNode);
             }

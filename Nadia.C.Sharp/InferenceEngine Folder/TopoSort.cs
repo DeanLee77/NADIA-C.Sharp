@@ -563,5 +563,38 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
             return highlyPossible;
         }
 
+        public static List<int> FindAllLeafChild(int parentNodeId, DependencyMatrix dependencyMatrix)
+        {
+            List<int> childListOfTheParent = dependencyMatrix.GetToChildDependencyList(parentNodeId);
+            List<int> listOfLeafChild = new List<int>();
+            childListOfTheParent.ForEach(child => {
+                if (dependencyMatrix.GetToChildDependencyList(child).Count() == 0)
+                {
+                    listOfLeafChild.Add(child);
+                }
+                else
+                {
+                    FindAllLeafChildAux(child, dependencyMatrix, listOfLeafChild);
+                }
+            });
+
+            return listOfLeafChild;
+        }
+
+        public static void FindAllLeafChildAux(int parentNodeId, DependencyMatrix dependencyMatrix, List<int> listOfLeafChild)
+        {
+            List<int> childListOfTheParent = dependencyMatrix.GetToChildDependencyList(parentNodeId);
+            childListOfTheParent.ForEach(child => {
+                if (dependencyMatrix.GetToChildDependencyList(child).Count() == 0)
+                {
+                    listOfLeafChild.Add(child);
+                }
+                else
+                {
+                    FindAllLeafChildAux(child, dependencyMatrix, listOfLeafChild);
+                }
+            });
+        }
+
     }
 }
