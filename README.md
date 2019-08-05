@@ -13,7 +13,7 @@ another link is [ Introduction of NADIA Policy / Business rules Engine from NExS
 # ***Relevant NADIA project list***
 [NADIA Java](https://github.com/DeanLee77/Nadia)<br/>
 [NADIA Java REST](https://github.com/NExST-RnDLabs/NadiaRS)<br/>
-[NADIA Python](https://github.com/DeanLee77/NADIA-Python/)
+[NADIA Python (In Progress)](https://github.com/DeanLee77/NADIA-Python/)
 
 ## 1. Introduction
 This project is building a Rules(Policies)/Inference Engine with ease of use and maintain rules/policies. It aims to be:
@@ -88,5 +88,5 @@ An inference engine using forward chaining searches the inference rules until it
 * 'statement A' is false with given information of 'statement B' and 'statement C', however it could be changed based on conclusion  of 'statement B' because 'statement B' is unknown.
 
 ## 7. License
-Copyright (c) 2017-2018 individual contributors.
-Nadia-R.S is open source project and released under AGPL 3.0 License.
+Copyright (c) 2017-2019 individual contributors.
+Nadia-C.Sharp is open source project and released under AGPL 3.0 License.
