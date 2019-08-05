@@ -389,14 +389,14 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         public static Node FindTheMostPositive(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
         {
+
             Node theMostPositive = null;
             int yesCount = 0;
             int noCount = 0;
-            float theMostPossibility = 0;
-            int sum = 0;
-            float result = 0;
+            int theLargestYesCount = 0;
+            int theSmallestNoCount = 0;
 
-            foreach (Node node in childNodeList)
+            foreach(Node node in childNodeList)
             {
                 string prefix = "";
                 int? dependencyType = dependencyMatrixAsList[node.GetNodeId()];
@@ -413,16 +413,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     prefix = "not known ";
                 }
 
+
                 Record recordOfNode = recordListOfNodes[prefix + node.GetNodeName()];
                 yesCount = recordOfNode != null ? recordOfNode.GetTrueCount() : 0;
                 noCount = recordOfNode != null ? recordOfNode.GetFalseCount() : 0;
-                int yesPlusNoCount = (yesCount + noCount) == 0 ? -1 : (yesCount + noCount);
 
-                result = (float)yesCount / yesPlusNoCount;
-                if (Analysis(result, theMostPossibility, yesPlusNoCount, sum))
+                if ((yesCount > theLargestYesCount) || (yesCount == theLargestYesCount && noCount < theSmallestNoCount))
                 {
-                    theMostPossibility = result;
-                    sum = yesCount + noCount;
+                    theLargestYesCount = yesCount;
+                    theSmallestNoCount = noCount;
                     theMostPositive = node;
                 }
             }
@@ -432,55 +431,53 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         public static Node FindTheMostPositive(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes)
         {
+
             Node theMostPositive = null;
             int yesCount = 0;
             int noCount = 0;
-            float theMostPossibility = 0;
-            int sum = 0;
-            float result = 0;
+            int theLargestYesCount = 0;
+            int theSmallestNoCount = 0;
 
-            foreach (Node node in childNodeList)
+
+            foreach(Node node in childNodeList)
             {
                 Record recordOfNode = recordListOfNodes[node.GetNodeName()];
                 yesCount = recordOfNode != null ? recordOfNode.GetTrueCount() : 0;
                 noCount = recordOfNode != null ? recordOfNode.GetFalseCount() : 0;
-                int yesPlusNoCount = (yesCount + noCount) == 0 ? -1 : (yesCount + noCount);
 
-                result = (float)yesCount / yesPlusNoCount;
-                if (Analysis(result, theMostPossibility, yesPlusNoCount, sum))
+                if ((yesCount > theLargestYesCount) || (yesCount == theLargestYesCount && noCount < theSmallestNoCount))
                 {
-                    theMostPossibility = result;
-                    sum = yesCount + noCount;
+                    theLargestYesCount = yesCount;
+                    theSmallestNoCount = noCount;
                     theMostPositive = node;
                 }
             }
             childNodeList.Remove(theMostPositive);
             return theMostPositive;
-
         }
 
         public static Node FindTheMostNegative(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes, List<int> dependencyMatrixAsList)
         {
+
             Node theMostNegative = null;
             int yesCount = 0;
             int noCount = 0;
-            float theMostPossibility = 0;
-            int sum = 0;
-            float result = 0;
+            int theLargestNoCount = 0;
+            int theSmallestYesCount = 0;
 
-            foreach (Node node in childNodeList)
+            foreach(Node node in childNodeList)
             {
-                string prefix = "";
-                int dependencyType = dependencyMatrixAsList[node.GetNodeId()];
-                if ((dependencyType & DependencyType.GetKnown()) == DependencyType.GetKnown())
+                String prefix = "";
+                int? dependencyType = dependencyMatrixAsList[node.GetNodeId()];
+                if((dependencyType & DependencyType.GetKnown()) == DependencyType.GetKnown())
                 {
                     prefix = "known ";
                 }
-                else if ((dependencyType & DependencyType.GetNot()) == DependencyType.GetNot())
+                else if((dependencyType & DependencyType.GetNot()) == DependencyType.GetNot())
                 {
                     prefix = "not ";
                 }
-                else if ((dependencyType & (DependencyType.GetNot() | DependencyType.GetKnown())) == (DependencyType.GetNot() | DependencyType.GetKnown()))
+                else if((dependencyType & (DependencyType.GetNot() | DependencyType.GetKnown())) == (DependencyType.GetNot() | DependencyType.GetKnown()))
                 {
                     prefix = "not known ";
                 }
@@ -489,17 +486,12 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 yesCount = recordOfNode != null ? recordOfNode.GetTrueCount() : 0;
                 noCount = recordOfNode != null ? recordOfNode.GetFalseCount() : 0;
 
-                int yesPlusNoCount = (yesCount + noCount) == 0 ? -1 : (yesCount + noCount);
-                result = (float)noCount / yesPlusNoCount;
-
-                if (Analysis(result, theMostPossibility, yesPlusNoCount, sum))
+                if ((noCount > theLargestNoCount) || (noCount == theLargestNoCount && yesCount < theSmallestYesCount))
                 {
-                    theMostPossibility = result;
-                    sum = yesPlusNoCount == -1 ? yesPlusNoCount : yesCount + noCount;
+                    theSmallestYesCount = yesCount;
+                    theLargestNoCount = noCount;
                     theMostNegative = node;
                 }
-
-
             }
             childNodeList.Remove(theMostNegative);
             return theMostNegative;
@@ -507,12 +499,12 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
         public static Node FindTheMostNegative(List<Node> childNodeList, Dictionary<string, Record> recordListOfNodes)
         {
+
             Node theMostNegative = null;
             int yesCount = 0;
             int noCount = 0;
-            float theMostPossibility = 0;
-            int sum = 0;
-            float result = 0;
+            int theLargestNoCount = 0;
+            int theSmallestYesCount = 0;
 
             foreach (Node node in childNodeList)
             {
@@ -521,46 +513,15 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                 yesCount = recordOfNode != null ? recordOfNode.GetTrueCount() : 0;
                 noCount = recordOfNode != null ? recordOfNode.GetFalseCount() : 0;
 
-                int yesPlusNoCount = (yesCount + noCount) == 0 ? -1 : (yesCount + noCount);
-                result = (float)noCount / yesPlusNoCount;
-
-                if (Analysis(result, theMostPossibility, yesPlusNoCount, sum))
+                if ((noCount > theLargestNoCount) || (noCount == theLargestNoCount && yesCount < theSmallestYesCount))
                 {
-                    theMostPossibility = result;
-                    sum = yesPlusNoCount == -1 ? yesPlusNoCount : yesCount + noCount;
+                    theSmallestYesCount = yesCount;
+                    theLargestNoCount = noCount;
                     theMostNegative = node;
                 }
-
-
             }
             childNodeList.Remove(theMostNegative);
             return theMostNegative;
-        }
-
-        public static bool Analysis(float result, float theMostPossibility, int yesCountNoCount, int sum)
-        {
-            bool highlyPossible = false;
-            /*
-             * firstly select an option having more cases and high possibility
-             */
-            if (result > theMostPossibility && yesCountNoCount >= sum)
-            {
-                highlyPossible = true;
-            }
-            /*
-                 * secondly, even though the number of being used case is fewer, and it has a high possibility
-                 * then still select the option
-                 */
-            else if (result >= theMostPossibility && result == 0 && theMostPossibility == 0 && yesCountNoCount > sum)
-            {
-                highlyPossible = true;
-            }
-            else if (result >= theMostPossibility && result == 0 && yesCountNoCount == -1 && sum <= 0 && sum != -1)
-            {
-                highlyPossible = true;
-            }
-
-            return highlyPossible;
         }
 
         public static List<int> FindAllLeafChild(int parentNodeId, DependencyMatrix dependencyMatrix)
