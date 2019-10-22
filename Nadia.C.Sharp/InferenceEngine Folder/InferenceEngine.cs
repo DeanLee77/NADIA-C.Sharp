@@ -250,6 +250,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                                 ass.SetNodeToBeAsked(node);
                                 int indexOfRuleToBeAsked = i;
 
+                                Console.WriteLine("indexOfRuleToBeAsked : " + indexOfRuleToBeAsked);
+
                                 Node nextQuestionFromIterate = (node as IterateLine).GetIterateNextQuestion(this.nodeSet, this.ast);
                                 ass.SetAuxNodeToBeAsked(nextQuestionFromIterate);
 
@@ -262,6 +264,8 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
                     {
                         ass.SetNodeToBeAsked(node);
                         int indexOfRuleToBeAsked = i;
+
+                        Console.WriteLine("indexOfRuleToBeAsked : " + indexOfRuleToBeAsked);
 
                         return ass.GetNodeToBeAsked();
                     }

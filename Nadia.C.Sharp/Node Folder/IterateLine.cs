@@ -181,10 +181,11 @@ namespace Nadia.C.Sharp.NodeFolder
                     {
                         thisNodeMap.Add(tempNode.GetNodeName(), tempNode);
                         thisNodeIdMap.Add(tempNode.GetNodeId(), tempNode.GetNodeName());
-                        tempDependencyList.Add(new Dependency(thisNodeMap[thisNodeIdMap[modifiedParentId]], tempNode, parentDM.GetDependencyType(originalParentId, item)));
-
-                        CreateIterateNodeSetAux(parentDM, parentNodeMap, parentNodeIdMap, thisNodeMap, thisNodeIdMap, tempDependencyList, item, tempNode.GetNodeId(), nextNThInString);
                     }
+
+                    tempDependencyList.Add(new Dependency(thisNodeMap[thisNodeIdMap[modifiedParentId]], tempNode, parentDM.GetDependencyType(originalParentId, item)));
+
+                    CreateIterateNodeSetAux(parentDM, parentNodeMap, parentNodeIdMap, thisNodeMap, thisNodeIdMap, tempDependencyList, item, tempNode.GetNodeId(), nextNThInString);
 
                 });
             }       
@@ -350,7 +351,7 @@ namespace Nadia.C.Sharp.NodeFolder
                 {
                     if(!CanBeSelfEvaluated(parentAst.GetWorkingMemory()))
                     {
-                        questionNode = this.iterateIE.GetNextQuestion(this.iterateIE.GetAssessment());
+                         questionNode = this.iterateIE.GetNextQuestion(this.iterateIE.GetAssessment());
                     }
                 }
             }

@@ -89,10 +89,17 @@ namespace Nadia.C.Sharp.NodeFolder
                     this.value = FactValue.Parse(doubleValue);
                     break;
                 case "Da":
+                    string[] dateFmt = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt",
+                     "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss",
+                     "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt",
+                     "M/d/yyyy h:mm", "M/d/yyyy h:mm",
+                     "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm",
+                     "d/M/yyyy", "M/d/yyyy"};
                     DateTime dateValue;
-                    DateTime.TryParseExact(lastToken, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dateValue);
+                    DateTime.TryParseExact(lastToken, dateFmt, null, System.Globalization.DateTimeStyles.None, out dateValue);
 
                     this.value = FactValue.Parse(dateValue);
+
                     break;
                 case "Url":
                     this.value = FactValue.ParseURL(lastToken);
