@@ -421,7 +421,19 @@ namespace Nadia.C.Sharp.RuleParserFolder
                     {
 
                         string parentNodeOfVirtualNodeName = node.GetNodeName();
-                        Node virtualNode = new ValueConclusionLine("VirtualNode-" + parentNodeOfVirtualNodeName, Tokenizer.GetTokens("VirtualNode-" + parentNodeOfVirtualNodeName));
+                        LineType nodeLineType = node.GetLineType();
+                        Node virtualNode;
+
+                        if (nodeLineType.Equals(LineType.EXPR_CONCLUSION))
+                        {
+                            virtualNode = new ExprConclusionLine("VirtualNode-" + parentNodeOfVirtualNodeName, Tokenizer.GetTokens("VirtualNode-" + parentNodeOfVirtualNodeName));
+                        }
+                        else
+                        {
+                            virtualNode = new ValueConclusionLine("VirtualNode-" + parentNodeOfVirtualNodeName, Tokenizer.GetTokens("VirtualNode-" + parentNodeOfVirtualNodeName));
+                        }
+
+
                         this.nodeSet.GetNodeIdMap().Add(virtualNode.GetNodeId(), "VirtualNode-" + parentNodeOfVirtualNodeName);
                         virtualNodeMap.Add("VirtualNode-" + parentNodeOfVirtualNodeName, virtualNode);
                         if (mandatoryAnd > 0)

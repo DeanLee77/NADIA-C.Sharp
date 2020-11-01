@@ -30,18 +30,33 @@ namespace Nadia.C.Sharp
 
             //Jint.Engine scriptEngine = new Jint.Engine();
             //Console.WriteLine("this: "+ scriptEngine.Execute("\'this is good\'>= \'what is this\'").GetCompletionValue());
-            TestClass.Testing_for_ALL_Node_Lines_and_features_10();
+            //TestClass.Testing_for_ALL_Node_Lines_and_features_10();
 
-        //TestClass.Testing_Whole_Features_Of_ValueConclusionLine_ComparisonLine_and_ExprConclusionLine_9();
+            //TestClass.Testing_Whole_Features_Of_ValueConclusionLine_ComparisonLine_and_ExprConclusionLine_9();
 
-        //TestClass.Testing_Whole_Features_Of_ValueConclusionLIne_and_ComparisonLine_8();
-        //TestClass.Tesing_Full_ValueConclusion_Comparison_7();
-        //TestClass.Testing_ValueConclusionLine_6();
-        //TestClass.Testing_Inference_For_NotKnownManOpPo_5();
-        //TestClass.Testing_For_Reading_NotKnownMandatoryPossiblyAndOptionally_4();
-        //TestClass.WeddingPlanner_Inference_Test_3();
-        //TestClass.TopoSortingTest_2();
-        //TestClass.Testing();
-    }
+            //TestClass.Testing_Whole_Features_Of_ValueConclusionLIne_and_ComparisonLine_8();
+            //TestClass.Tesing_Full_ValueConclusion_Comparison_7();
+            //TestClass.Testing_ValueConclusionLine_6();
+            //TestClass.Testing_Inference_For_NotKnownManOpPo_5();
+            //TestClass.Testing_For_Reading_NotKnownMandatoryPossiblyAndOptionally_4();
+            //TestClass.WeddingPlanner_Inference_Test_3();
+            //TestClass.TopoSortingTest_2();
+
+            String parentText = "FIXED a name of the first person IS \"John Smith\"";
+            //parentText = "FIXED the first integer AS NUMBER IS 34";
+            //parentText = "FIXED premium account type AS LIST";
+            Regex regex = new Regex("^(FIXED)(.*)((AS|IS)\\s+.*)");
+            
+            Match match = regex.Match(parentText); ;
+
+            
+
+            if (match.Success)
+            {
+                String variableName = match.Groups[2].ToString().Trim();
+                Console.WriteLine(variableName);
+            }
+                    //TestClass.Testing();
+        }
     }
 }

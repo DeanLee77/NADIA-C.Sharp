@@ -36,7 +36,7 @@ namespace Nadia.C.Sharp.NodeFolder
             {
                 case MetaType.FIXED:
 
-                    regex = new Regex("^(FIXED)(.*)(\\s[AS|IS]\\s*.*)");
+                    regex = new Regex("^(FIXED)(.*)(\\s(AS|IS)\\s*.*)");
                     match = regex.Match(parentText);
                    
                     if(match.Success)
