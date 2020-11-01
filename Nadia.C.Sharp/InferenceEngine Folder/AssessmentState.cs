@@ -162,12 +162,14 @@ namespace Nadia.C.Sharp.InferenceEngineFolder
 
                 if (tempFv.GetFactValueType().Equals(FactValueType.LIST))
                 {
-                    ((FactListValue)tempFv).AddFactValueToListValue(tempFv);
+                    ((FactListValue)tempFv).AddFactValueToListValue(value);
                 }
                 else
                 {
                     FactListValue flv = FactValue.Parse(new List<FactValue>());
                     flv.AddFactValueToListValue(tempFv);
+                    flv.AddFactValueToListValue(value);
+                    workingMemory.Add(nodeVariableName, flv);
                 }
             }
             else
