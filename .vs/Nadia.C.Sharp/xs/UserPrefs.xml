@@ -1,19 +1,8 @@
 ﻿<Properties StartupConfiguration="{E5A172D3-CE33-4031-84EA-35835913261E}|Default">
   <MonoDevelop.Ide.ItemProperties.Nadia.C.Sharp PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Nadia.C.Sharp/InferenceEngine Folder/AssessmentState.cs">
     <Files>
-      <File FileName="Nadia.C.Sharp/Program.cs" Line="62" Column="2" />
-      <File FileName="Nadia.C.Sharp/Node Folder/Node.cs" />
-      <File FileName="Nadia.C.Sharp/FactValue Folder/FactValue.cs" />
-      <File FileName="Nadia.C.Sharp/Testing Folder/Test1/Testing for ALL Node Lines and features.txt" />
-      <File FileName="Nadia.C.Sharp/Testing Folder/NodeObject_For_Inference_Test.cs" />
-      <File FileName="Nadia.C.Sharp/Testing Folder/Test1/Tokenizer_Testing.txt" />
-      <File FileName="Nadia.C.Sharp/Node Folder/MetadataLine.cs" Line="40" Column="53" />
-      <File FileName="Nadia.C.Sharp/Testing Folder/Test1/TestClass.cs" />
-      <File FileName="Nadia.C.Sharp/RuleParser Folder/Tokenizer.cs" Line="19" Column="110" />
-      <File FileName="Nadia.C.Sharp/Node Folder/ValueConclusionLine.cs" />
-      <File FileName="Nadia.C.Sharp/RuleParser Folder/RuleSetParser.cs" Line="426" Column="1" />
-      <File FileName="Nadia.C.Sharp/InferenceEngine Folder/TopoSort.cs" Line="1" Column="1" />
+      <File FileName="Nadia.C.Sharp/InferenceEngine Folder/AssessmentState.cs" Line="172" Column="62" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -22,7 +11,7 @@
             <Node name="Nadia.C.Sharp" expanded="True">
               <Node name="FactValue Folder" expanded="True" />
               <Node name="InferenceEngine Folder" expanded="True">
-                <Node name="TopoSort.cs" selected="True" />
+                <Node name="AssessmentState.cs" selected="True" />
               </Node>
               <Node name="Node Folder" expanded="True" />
               <Node name="RuleParser Folder" expanded="True" />
